@@ -140,9 +140,10 @@
     </g>
 
     {{-- Little plants --}}
-    <g class="landscape-plants">
+<g class="landscape-plants">
 
-        <g transform="translate(70 238)">
+    <g transform="translate(70 238)">
+        <g class="plant-sway">
             <line
                 x1="0"
                 y1="0"
@@ -170,8 +171,11 @@
                 fill="#90aa5c"
             />
         </g>
+    </g>
 
-        <g transform="translate(500 230)">
+
+    <g transform="translate(500 230)">
+        <g class="plant-sway">
             <line
                 x1="0"
                 y1="0"
@@ -199,8 +203,11 @@
                 fill="#a1b967"
             />
         </g>
+    </g>
 
-        <g transform="translate(580 244)">
+
+    <g transform="translate(580 244)">
+        <g class="plant-sway">
             <line
                 x1="0"
                 y1="0"
@@ -228,7 +235,7 @@
                 fill="#a4b96a"
             />
         </g>
-
     </g>
 
+</g>
 </svg>

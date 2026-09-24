@@ -4,25 +4,28 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
 }
 
-body {
-    background: #121025;
-    color: #f5f3ff;
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
 }
 
 body {
     margin: 0;
     min-height: 100vh;
+
     background: #121025;
     color: #f5f3ff;
-    font-family: Arial, Helvetica, sans-serif;
-}
 
-* {
-    box-sizing: border-box;
+    font-family: var(--font-sans);
 }
 
 button,
@@ -30,13 +33,24 @@ a {
     font: inherit;
 }
 
+
+/* =========================================================
+   APP SHELL
+   ========================================================= */
+
 .app-shell {
     width: min(1180px, calc(100% - 48px));
     margin: 0 auto;
 }
 
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
 .topbar {
     min-height: 88px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -49,6 +63,7 @@ a {
 
     color: #f5f3ff;
     text-decoration: none;
+
     font-size: 17px;
     font-weight: 700;
 }
@@ -84,7 +99,12 @@ a {
     color: #171329;
 
     font-weight: 700;
+
     cursor: pointer;
+
+    transition:
+        transform 180ms ease,
+        background 180ms ease;
 }
 
 .new-project-button span {
@@ -95,6 +115,12 @@ a {
 .new-project-button:hover {
     transform: translateY(-2px);
 }
+
+
+/* =========================================================
+   DASHBOARD INTRO
+   ========================================================= */
+
 .dashboard-intro {
     padding: 70px 0 28px;
 }
@@ -106,16 +132,17 @@ a {
 .intro-copy h1 {
     margin: 0;
 
+    color: #eeeaf8;
+
     font-size: clamp(48px, 6vw, 76px);
     line-height: 0.98;
     letter-spacing: -0.055em;
     font-weight: 700;
-
-    color: #eeeaf8;
 }
 
 .intro-copy p {
     max-width: 610px;
+
     margin: 22px 0 0;
 
     color: #9994ad;
@@ -124,10 +151,16 @@ a {
     line-height: 1.65;
 }
 
+
+/* =========================================================
+   CLIENT FILTERS
+   ========================================================= */
+
 .client-toolbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 24px;
 
     padding: 22px 0 36px;
@@ -138,17 +171,19 @@ a {
 .client-filters {
     display: flex;
     align-items: center;
-    gap: 10px;
     flex-wrap: wrap;
+
+    gap: 10px;
 }
 
 .client-filter,
 .add-client-button {
+    min-height: 42px;
+
     display: inline-flex;
     align-items: center;
     gap: 9px;
 
-    min-height: 42px;
     padding: 0 16px;
 
     border: 1px solid rgba(255, 255, 255, 0.09);
@@ -179,6 +214,7 @@ a {
 .client-filter.is-active {
     background: #f1eef8;
     color: #171329;
+
     border-color: #f1eef8;
 }
 
@@ -210,6 +246,11 @@ a {
     line-height: 1;
 }
 
+
+/* =========================================================
+   CLIENT OVERVIEW
+   ========================================================= */
+
 .client-overview {
     padding: 48px 0 0;
 }
@@ -218,6 +259,7 @@ a {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
+
     gap: 32px;
 
     margin-bottom: 26px;
@@ -252,6 +294,11 @@ a {
     color: #9691a6;
 }
 
+
+/* =========================================================
+   CLIENT STATS
+   ========================================================= */
+
 .client-overview__stats {
     display: flex;
     gap: 12px;
@@ -284,35 +331,18 @@ a {
     font-size: 16px;
 }
 
-.client-visual {
-    min-height: 310px;
 
-    display: grid;
-    place-items: center;
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 28px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(102, 84, 164, 0.22),
-            rgba(38, 32, 75, 0.5)
-        );
-
-    overflow: hidden;
-
-    color: #8f89a3;
-}
-
+/* =========================================================
+   CLIENT LANDSCAPE
+   ========================================================= */
 
 .client-visual {
     min-height: 310px;
 
+    overflow: hidden;
+
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 28px;
-
-    overflow: hidden;
 
     background: #262244;
 }
@@ -323,6 +353,214 @@ a {
     width: 100%;
     height: 100%;
     min-height: 310px;
+}
 
-    object-fit: cover;
+
+/* =========================================================
+   WINDMILL ANIMATION
+   ========================================================= */
+
+.windmill-blades {
+    transform-box: fill-box;
+    transform-origin: center;
+
+    animation: windmill-spin 8s linear infinite;
+}
+
+@keyframes windmill-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   CLOUD ANIMATIONS
+   ========================================================= */
+
+.landscape-cloud--one {
+    animation: cloud-drift-one 14s ease-in-out infinite alternate;
+}
+
+.landscape-cloud--two {
+    animation: cloud-drift-two 18s ease-in-out infinite alternate;
+}
+
+@keyframes cloud-drift-one {
+    from {
+        transform: translateX(-12px);
+    }
+
+    to {
+        transform: translateX(18px);
+    }
+}
+
+@keyframes cloud-drift-two {
+    from {
+        transform: translateX(16px);
+    }
+
+    to {
+        transform: translateX(-14px);
+    }
+}
+
+
+/* =========================================================
+   PLANT ANIMATIONS
+   ========================================================= */
+
+/*
+The outer SVG group handles positioning with translate().
+The inner .plant-sway group handles the animation.
+
+Keeping those separate prevents the CSS animation from
+overwriting the SVG position.
+*/
+
+.plant-sway {
+    transform-box: fill-box;
+    transform-origin: bottom center;
+
+    animation: plant-sway 3.6s ease-in-out infinite alternate;
+}
+
+.landscape-plants > g:nth-child(1) .plant-sway {
+    animation-duration: 3.6s;
+}
+
+.landscape-plants > g:nth-child(2) .plant-sway {
+    animation-duration: 4.2s;
+    animation-delay: -1s;
+}
+
+.landscape-plants > g:nth-child(3) .plant-sway {
+    animation-duration: 3.9s;
+    animation-delay: -0.6s;
+}
+
+@keyframes plant-sway {
+    from {
+        transform: rotate(-1.5deg);
+    }
+
+    to {
+        transform: rotate(1.5deg);
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 720px) {
+    .app-shell {
+        width: min(100% - 28px, 1180px);
+    }
+
+    .dashboard-intro {
+        padding-top: 44px;
+    }
+
+    .client-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .client-overview__header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .client-overview__stats {
+        width: 100%;
+    }
+
+    .client-stat {
+        flex: 1;
+    }
+}
+
+.plant-sway {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+
+    animation: plant-sway 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes plant-sway {
+    from {
+        transform: rotate(-6deg);
+    }
+
+    to {
+        transform: rotate(6deg);
+    }
+}
+
+/* =========================================================
+   SUN ANIMATION
+   ========================================================= */
+
+.landscape-sun {
+    transform-box: fill-box;
+    transform-origin: center;
+
+    animation: sun-float 5s ease-in-out infinite alternate;
+}
+
+@keyframes sun-float {
+    from {
+        transform: translateY(2px) scale(0.98);
+    }
+
+    to {
+        transform: translateY(-4px) scale(1.02);
+    }
+}
+
+/* =========================================================
+   LANDSCAPE HOVER INTERACTION
+   ========================================================= */
+
+.client-visual {
+    transition:
+        border-color 250ms ease,
+        box-shadow 250ms ease;
+}
+
+.client-landscape {
+    transform-origin: center;
+    transition:
+        transform 600ms cubic-bezier(0.22, 1, 0.36, 1),
+        filter 400ms ease;
+}
+
+.client-visual:hover {
+    border-color: rgba(196, 154, 37, 0.28);
+
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.22),
+        0 0 0 1px rgba(196, 154, 37, 0.05);
+}
+
+.client-visual:hover .client-landscape {
+    transform: scale(1.025);
+    filter: brightness(1.06);
+}
+
+/* Wind picks up slightly on hover */
+.client-visual:hover .windmill-blades {
+    animation-duration: 4.5s;
+}
+
+/* Sun becomes a little warmer/brighter */
+.client-visual:hover .landscape-sun {
+    filter: brightness(1.12);
 }

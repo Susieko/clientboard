@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Client;
 use App\Models\Project;
 use Illuminate\Database\Seeder;
 
@@ -9,36 +10,48 @@ class ProjectSeeder extends Seeder
 {
     public function run(): void
     {
-        Project::create([
-            'title' => 'NoordgroeiT website',
-            'client' => 'NoordgroeiT',
-            'status' => 'development',
-            'deadline' => '2026-09-30',
-            'progress' => 72,
-        ]);
+        $noordgroeit = Client::where('slug', 'noordgroeit')->firstOrFail();
+        $ehbo = Client::where('slug', 'ehbo')->firstOrFail();
+        $eaa = Client::where('slug', 'eaa')->firstOrFail();
 
-        Project::create([
-            'title' => 'EHBO website',
-            'client' => 'EHBO',
-            'status' => 'feedback',
-            'deadline' => '2026-09-26',
-            'progress' => 94,
-        ]);
+        Project::updateOrCreate(
+            ['title' => 'NoordgroeiT website'],
+            [
+                'client_id' => $noordgroeit->id,
+                'status' => 'development',
+                'deadline' => '2026-09-30',
+                'progress' => 72,
+            ]
+        );
 
-        Project::create([
-            'title' => 'Initiatief EAA',
-            'client' => 'EAA',
-            'status' => 'design',
-            'deadline' => '2026-10-10',
-            'progress' => 28,
-        ]);
+        Project::updateOrCreate(
+            ['title' => 'EHBO website'],
+            [
+                'client_id' => $ehbo->id,
+                'status' => 'feedback',
+                'deadline' => '2026-09-26',
+                'progress' => 94,
+            ]
+        );
 
-        Project::create([
-            'title' => 'Noordbuiten merge',
-            'client' => 'NoordgroeiT',
-            'status' => 'done',
-            'deadline' => '2026-09-18',
-            'progress' => 100,
-        ]);
+        Project::updateOrCreate(
+            ['title' => 'Initiatief EAA'],
+            [
+                'client_id' => $eaa->id,
+                'status' => 'design',
+                'deadline' => '2026-10-10',
+                'progress' => 28,
+            ]
+        );
+
+        Project::updateOrCreate(
+            ['title' => 'Noordbuiten merge'],
+            [
+                'client_id' => $noordgroeit->id,
+                'status' => 'done',
+                'deadline' => '2026-09-18',
+                'progress' => 100,
+            ]
+        );
     }
 }

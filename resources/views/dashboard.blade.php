@@ -168,7 +168,7 @@
     data-project-card
 
     data-project-title="{{ $project['title'] }}"
-    data-project-client="{{ $project['client'] }}"
+    data-project-client="{{ $project->client?->name ?? 'No client' }}"
     data-project-status="{{ $project['status'] }}"
     data-project-deadline="{{ $project['deadline'] }}"
     data-project-progress="{{ $project['progress'] }}"
@@ -180,7 +180,7 @@
                                 <div class="project-card__top">
 
                                     <span class="project-card__client">
-                                        {{ $project['client'] }}
+                                        {{ $project->client?->name ?? 'No client' }}
                                     </span>
 
                                     <button

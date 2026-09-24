@@ -1,43 +1,32 @@
 <?php
 
 use App\Http\Controllers\ProjectController;
+use App\Models\Client;
 use App\Models\Project;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
 
-    $clients = [
-        [
-            'name' => 'NoordgroeiT',
-            'slug' => 'noordgroeit',
-            'type' => 'Non-profit',
-            'location' => 'Tilburg-Noord',
-            'activeProjects' => 2,
-            'status' => 'Active',
-        ],
-        [
-            'name' => 'EHBO',
-            'slug' => 'ehbo',
-            'type' => 'Association',
-            'location' => 'Tilburg',
-            'activeProjects' => 1,
-            'status' => 'Active',
-        ],
-        [
-            'name' => 'EAA',
-            'slug' => 'eaa',
-            'type' => 'Initiative',
-            'location' => 'Tilburg',
-            'activeProjects' => 1,
-            'status' => 'Planning',
-        ],
-    ];
+    /*
+    |--------------------------------------------------------------------------
+    | Clients
+    |--------------------------------------------------------------------------
+    */
+
+    $clients = Client::orderBy('name')->get();
 
     $selectedSlug = request('client');
 
-    $selectedClient = collect($clients)
-        ->firstWhere('slug', $selectedSlug);
+    $selectedClient = $selectedSlug
+        ? $clients->firstWhere('slug', $selectedSlug)
+        : null;
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Workflow
+    |--------------------------------------------------------------------------
+    */
 
     $workflowColumns = [
         [
@@ -58,28 +47,43 @@ Route::get('/', function () {
         ],
     ];
 
-    Route::patch(
-    '/projects/{project}/progress',
-    [ProjectController::class, 'updateProgress']
-)->name('projects.progress.update');
 
-$projects = Project::all();
+    /*
+    |--------------------------------------------------------------------------
+    | Projects
+    |--------------------------------------------------------------------------
+    */
 
-    $visibleProjects = $selectedSlug
-    ? collect($projects)
-        ->filter(function ($project) use ($selectedClient) {
-            return $selectedClient
-                && $project['client'] === $selectedClient['name'];
-        })
-        ->values()
-        ->all()
-    : $projects;
+    $projects = Project::with('client')->get();
+
+    $visibleProjects = $selectedClient
+        ? $projects
+            ->where('client_id', $selectedClient->id)
+            ->values()
+        : $projects;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard stats
+    |--------------------------------------------------------------------------
+    */
+
+    $waitingForFeedback = $projects
+        ->where('status', 'feedback')
+        ->count();
+
+    $activeProjects = $projects
+        ->where('status', '!=', 'done')
+        ->count();
+
+    $clientCount = $clients->count();
 
 
     return view('dashboard', [
-        'waitingForFeedback' => 2,
-        'activeProjects' => 5,
-        'clientCount' => count($clients),
+        'waitingForFeedback' => $waitingForFeedback,
+        'activeProjects' => $activeProjects,
+        'clientCount' => $clientCount,
 
         'clients' => $clients,
         'selectedClient' => $selectedClient,
@@ -89,3 +93,9 @@ $projects = Project::all();
         'projects' => $visibleProjects,
     ]);
 });
+
+
+Route::patch(
+    '/projects/{project}/progress',
+    [ProjectController::class, 'updateProgress']
+)->name('projects.progress.update');

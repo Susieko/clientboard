@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\NoteController;
 use App\Http\Controllers\ProjectController;
 use App\Models\Client;
 use App\Models\Project;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/', function () {
 
@@ -54,7 +56,7 @@ Route::get('/', function () {
     |--------------------------------------------------------------------------
     */
 
-    $projects = Project::with('client')->get();
+    $projects = Project::with(['client', 'notes'])->get();
 
     $visibleProjects = $selectedClient
         ? $projects
@@ -99,3 +101,8 @@ Route::patch(
     '/projects/{project}/progress',
     [ProjectController::class, 'updateProgress']
 )->name('projects.progress.update');
+
+Route::post(
+    '/projects/{project}/notes',
+    [NoteController::class, 'store']
+)->name('projects.notes.store');

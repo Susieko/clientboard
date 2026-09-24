@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clientboard</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
@@ -167,8 +168,10 @@
     class="project-card"
     data-project-card
 
+    data-project-id="{{ $project->id }}"
     data-project-title="{{ $project['title'] }}"
     data-project-client="{{ $project->client?->name ?? 'No client' }}"
+    data-project-notes="{{ $project->notes->pluck('content')->toJson() }}"
     data-project-status="{{ $project['status'] }}"
     data-project-deadline="{{ $project['deadline'] }}"
     data-project-progress="{{ $project['progress'] }}"
@@ -215,8 +218,7 @@
                                         ></span>
                                     </div>
 
-                                </div>
-
+                                </div>  
 
                                 <div class="project-card__footer">
 
@@ -342,7 +344,6 @@
 
 </div>
 
-
 <div class="drawer-detail">
 
     <div class="drawer-progress__header">
@@ -362,6 +363,39 @@
         value="0"
         aria-label="Project progress"
     >
+
+</div>
+
+<div class="drawer-detail">
+
+    <span class="drawer-detail__label">
+        Notes
+    </span>
+
+    <div
+        class="drawer-notes"
+        data-drawer-notes
+    ></div>
+
+    <div class="drawer-note-form">
+
+    <input
+        type="text"
+        class="drawer-note-input"
+        data-note-input
+        placeholder="Add a note"
+        maxlength="500"
+    >
+
+    <button
+        type="button"
+        class="drawer-note-add"
+        data-note-add
+    >
+        Add
+    </button>
+
+</div>
 
 </div>
 

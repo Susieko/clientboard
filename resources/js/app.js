@@ -7,6 +7,7 @@ const closeButton = document.querySelector('[data-drawer-close]')
 const drawerTitle = document.querySelector('[data-drawer-title]')
 const drawerClient = document.querySelector('[data-drawer-client]')
 const drawerDeadline = document.querySelector('[data-drawer-deadline]')
+const drawerNotes = document.querySelector('[data-drawer-notes]')
 
 const statusButtons = document.querySelectorAll('[data-status-button]')
 
@@ -17,6 +18,13 @@ const progressSlider = document.querySelector(
 const progressLabel = document.querySelector(
     '[data-drawer-progress-label]'
 )
+
+const noteInput = document.querySelector('[data-note-input]')
+const noteAddButton = document.querySelector('[data-note-add]')
+
+const csrfToken = document.querySelector(
+    'meta[name="csrf-token"]'
+)?.content
 
 let activeProjectCard = null
 
@@ -29,6 +37,9 @@ function openDrawer(card) {
     const status = card.dataset.projectStatus
     const deadline = card.dataset.projectDeadline
     const progress = card.dataset.projectProgress
+    const notes = JSON.parse(
+    card.dataset.projectNotes || '[]'
+)
 
 
     /* Project info */
@@ -71,6 +82,32 @@ function openDrawer(card) {
         progressLabel.textContent = `${progress}%`
     }
 
+    if (drawerNotes) {
+    drawerNotes.innerHTML = ''
+
+    if (notes.length === 0) {
+        drawerNotes.innerHTML = `
+            <p class="drawer-notes__empty">
+                No notes yet.
+            </p>
+        `
+    } else {
+        notes.forEach((note) => {
+            const item = document.createElement('div')
+
+            item.classList.add('drawer-note')
+
+            item.innerHTML = `
+                <span class="drawer-note__dot"></span>
+                <span></span>
+            `
+
+            item.querySelector('span:last-child').textContent = note
+
+            drawerNotes.appendChild(item)
+        })
+    }
+}
 
     /* Open drawer */
 
@@ -78,6 +115,111 @@ function openDrawer(card) {
     backdrop?.classList.add('is-open')
 
     drawer?.setAttribute('aria-hidden', 'false')
+
+    /* =========================================================
+   ADD NOTE
+   ========================================================= */
+
+noteAddButton?.addEventListener('click', async () => {
+    if (!activeProjectCard || !noteInput) {
+        return
+    }
+
+    const content = noteInput.value.trim()
+
+    if (!content) {
+        return
+    }
+
+    const projectId = activeProjectCard.dataset.projectId
+
+    noteAddButton.disabled = true
+    noteAddButton.textContent = 'Adding...'
+
+    try {
+        const response = await fetch(
+            `/projects/${projectId}/notes`,
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+
+                body: JSON.stringify({
+                    content: content,
+                }),
+            }
+        )
+
+        if (!response.ok) {
+            throw new Error('Could not save note.')
+        }
+
+        const data = await response.json()
+
+
+        /* Add note visually to drawer */
+
+        const noteElement = document.createElement('div')
+
+        noteElement.classList.add('drawer-note')
+
+        noteElement.innerHTML = `
+            <span class="drawer-note__dot"></span>
+            <span></span>
+        `
+
+        noteElement.querySelector(
+            'span:last-child'
+        ).textContent = data.note.content
+
+
+        /* Remove "No notes yet" if present */
+
+        drawerNotes
+            ?.querySelector('.drawer-notes__empty')
+            ?.remove()
+
+
+        drawerNotes?.appendChild(noteElement)
+
+
+        /* Update card's stored notes */
+
+        const existingNotes = JSON.parse(
+            activeProjectCard.dataset.projectNotes || '[]'
+        )
+
+        existingNotes.push(data.note.content)
+
+        activeProjectCard.dataset.projectNotes =
+            JSON.stringify(existingNotes)
+
+
+        /* Reset input */
+
+        noteInput.value = ''
+        noteInput.focus()
+
+    } catch (error) {
+        console.error(error)
+
+        alert('The note could not be saved.')
+    } finally {
+        noteAddButton.disabled = false
+        noteAddButton.textContent = 'Add'
+    }
+})
+
+noteInput?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault()
+        noteAddButton?.click()
+    }
+})
 }
 
 

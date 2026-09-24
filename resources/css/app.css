@@ -1262,3 +1262,111 @@ overwriting the SVG position.
 
     cursor: grab;
 }
+
+/* =========================================================
+   DRAWER NOTES
+   ========================================================= */
+
+.drawer-notes {
+    display: grid;
+    gap: 0;
+}
+
+.drawer-note {
+    display: grid;
+    grid-template-columns: 8px 1fr;
+    align-items: start;
+
+    gap: 10px;
+
+    padding: 11px 0;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+    color: #d5cfdd;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.drawer-note:last-child {
+    border-bottom: 0;
+}
+
+.drawer-note__dot {
+    width: 7px;
+    height: 7px;
+
+    margin-top: 6px;
+
+    border-radius: 50%;
+
+    background: #d0a323;
+}
+
+.drawer-notes__empty {
+    margin: 8px 0 0;
+
+    color: #777184;
+
+    font-size: 13px;
+}
+
+.drawer-note-form {
+    display: grid;
+    grid-template-columns: 1fr auto;
+
+    gap: 8px;
+
+    margin-top: 14px;
+}
+
+.drawer-note-input {
+    min-width: 0;
+
+    padding: 11px 13px;
+
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 11px;
+
+    background: rgba(7, 5, 20, 0.28);
+    color: #f1edf7;
+
+    outline: none;
+
+    transition:
+        border-color 180ms ease,
+        background 180ms ease;
+}
+
+.drawer-note-input::placeholder {
+    color: #777184;
+}
+
+.drawer-note-input:focus {
+    border-color: rgba(208, 163, 35, 0.55);
+    background: rgba(7, 5, 20, 0.4);
+}
+
+.drawer-note-add {
+    padding: 0 17px;
+
+    border: 0;
+    border-radius: 11px;
+
+    background: #d0a323;
+    color: #171329;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 180ms ease,
+        filter 180ms ease;
+}
+
+.drawer-note-add:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+}

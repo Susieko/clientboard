@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ProjectController;
+use App\Models\Project;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -56,37 +58,12 @@ Route::get('/', function () {
         ],
     ];
 
+    Route::patch(
+    '/projects/{project}/progress',
+    [ProjectController::class, 'updateProgress']
+)->name('projects.progress.update');
 
-    $projects = [
-        [
-            'title' => 'NoordgroeiT website',
-            'client' => 'NoordgroeiT',
-            'status' => 'development',
-            'deadline' => '30 Sep',
-            'progress' => 72,
-        ],
-        [
-            'title' => 'EHBO website',
-            'client' => 'Petrus Donders',
-            'status' => 'feedback',
-            'deadline' => '26 Sep',
-            'progress' => 94,
-        ],
-        [
-            'title' => 'Initiatief EAA',
-            'client' => 'EAA',
-            'status' => 'design',
-            'deadline' => '10 Oct',
-            'progress' => 28,
-        ],
-        [
-            'title' => 'Noordbuiten merge',
-            'client' => 'NoordgroeiT',
-            'status' => 'done',
-            'deadline' => '18 Sep',
-            'progress' => 100,
-        ],
-    ];
+$projects = Project::all();
 
     $visibleProjects = $selectedSlug
     ? collect($projects)

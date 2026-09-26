@@ -27,4 +27,43 @@ class ProjectController extends Controller
             'progress' => $project->progress,
         ]);
     }
+
+    public function updateStatus(Request $request, Project $project)
+{
+    $validated = $request->validate([
+        'status' => [
+            'required',
+            'string',
+            'in:design,development,feedback,done',
+        ],
+    ]);
+
+    $project->update([
+        'status' => $validated['status'],
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'status' => $project->status,
+    ]);
+}
+
+public function updateDeadline(Request $request, Project $project)
+{
+    $validated = $request->validate([
+        'deadline' => [
+            'nullable',
+            'date',
+        ],
+    ]);
+
+    $project->update([
+        'deadline' => $validated['deadline'],
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'deadline' => $project->deadline,
+    ]);
+}
 }

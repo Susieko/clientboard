@@ -58,20 +58,116 @@
             </button>
         </header>
 
-        <section class="dashboard-intro">
+<section class="dashboard-intro">
+
     <div class="intro-copy">
+
         <h1>
-            {{ $waitingForFeedback }} projects are<br>
-            waiting on feedback.
-        </h1>
+    @if ($waitingForFeedback === 1)
+
+        1 project is<br>
+        waiting for feedback.
+
+    @else
+
+        {{ $waitingForFeedback }} projects are<br>
+        waiting for feedback.
+
+    @endif
+</h1>
 
         <p>
-            {{ $activeProjects }} active projects across
-            {{ $clientCount }} clients.
+            {{ $activeProjects }}
+            {{ $activeProjects === 1 ? 'active project' : 'active projects' }}
+            across
+
+            {{ $clientCount }}
+            {{ $clientCount === 1 ? 'client' : 'clients' }}.
+
             Click a card for notes and details,
             or a client name for their page.
         </p>
+
     </div>
+
+
+    @if ($nextDeadline)
+
+        <button
+            type="button"
+            class="deadline-widget"
+            data-deadline-project="{{ $nextDeadline['id'] }}"
+        >
+
+            <div class="deadline-widget__copy">
+
+                <span class="deadline-widget__eyebrow">
+                    Next deadline
+                </span>
+
+                <strong class="deadline-widget__title">
+                    {{ $nextDeadline['title'] }}
+                </strong>
+
+                <span class="deadline-widget__meta">
+                    {{ $nextDeadline['client'] }}
+                    ·
+                    {{ $nextDeadline['date'] }}
+                </span>
+
+            </div>
+
+
+            <div class="deadline-widget__ring">
+
+                @if ($nextDeadline['days'] === 0)
+
+                    <strong class="deadline-widget__today">
+                        Today
+                    </strong>
+
+                @else
+
+                    <strong>
+                        {{ $nextDeadline['days'] }}
+                    </strong>
+
+                    <span>
+                        {{ $nextDeadline['days'] === 1
+                            ? 'day'
+                            : 'days' }}
+                    </span>
+
+                @endif
+
+            </div>
+
+        </button>
+
+    @else
+
+        <div class="deadline-widget deadline-widget--empty">
+
+            <div class="deadline-widget__copy">
+
+                <span class="deadline-widget__eyebrow">
+                    Next deadline
+                </span>
+
+                <strong class="deadline-widget__title">
+                    Nothing urgent ✨
+                </strong>
+
+                <span class="deadline-widget__meta">
+                    No upcoming deadlines
+                </span>
+
+            </div>
+
+        </div>
+
+    @endif
+
 </section>
 
 <section class="client-toolbar">
@@ -112,39 +208,92 @@
 </section>
 
 @if ($selectedClient)
-    <section class="client-overview">
+
+    <section
+        class="client-overview"
+        style="
+            --client-accent:
+            {{ $selectedClient->accent_color ?? '#d0a323' }};
+        "
+    >
 
         <div class="client-overview__content">
 
             <div class="client-overview__info">
 
                 <div class="client-overview__identity">
+
                     <span class="client-avatar">
-                        NG
+                        {{ $selectedClientInitials }}
                     </span>
 
                     <span class="client-type">
-                        Non-profit
+
+                        {{ $selectedClient->type ?? 'Client' }}
+
+                        @if ($selectedClient->location)
+                            · {{ $selectedClient->location }}
+                        @endif
+
                     </span>
+
                 </div>
+
 
                 <h2>
-                    {{ $selectedClient['name'] }}
+                    {{ $selectedClient->name }}
                 </h2>
 
+
                 <p class="client-description">
-                    A non-profit growing its online home:
-                    a warm, easy-to-use website for visitors,
-                    plus a place where volunteers can sign up.
+
+                    {{ $selectedClient->description
+                        ?? 'Client projects and progress.' }}
+
                 </p>
 
+
                 <div class="client-meta">
-                    <span>2 open projects</span>
-                    <span>Next due 14 Oct</span>
-                    <span>45% done on average</span>
+
+                    <span>
+
+                        {{ $selectedClientStats['open_projects'] }}
+
+                        {{ $selectedClientStats['open_projects'] === 1
+                            ? 'open project'
+                            : 'open projects' }}
+
+                    </span>
+
+
+                    <span>
+
+                        @if ($selectedClientStats['next_deadline'])
+
+                            Next due
+                            {{ $selectedClientStats['next_deadline'] }}
+
+                        @else
+
+                            No upcoming deadline
+
+                        @endif
+
+                    </span>
+
+
+                    <span>
+                        {{ $selectedClientStats['average_progress'] }}%
+                        done on average
+                    </span>
+
                 </div>
 
-                <a href="/" class="back-to-clients">
+
+                <a
+                    href="/"
+                    class="back-to-clients"
+                >
                     Back to all clients
                 </a>
 
@@ -152,12 +301,53 @@
 
 
             <div class="client-overview__visual">
-                @include('partials.noordgroeit-landscape')
+
+                @if ($selectedClient->slug === 'noordgroeit')
+
+                    @include(
+                        'partials.noordgroeit-landscape'
+                    )
+
+                @else
+
+                    <div class="client-generic-visual">
+
+                        <div
+                            class="
+                                client-generic-visual__orb
+                                client-generic-visual__orb--one
+                            "
+                        ></div>
+
+                        <div
+                            class="
+                                client-generic-visual__orb
+                                client-generic-visual__orb--two
+                            "
+                        ></div>
+
+                        <span
+                            class="client-generic-visual__initials"
+                        >
+                            {{ $selectedClientInitials }}
+                        </span>
+
+                        <span
+                            class="client-generic-visual__name"
+                        >
+                            {{ $selectedClient->name }}
+                        </span>
+
+                    </div>
+
+                @endif
+
             </div>
 
         </div>
 
     </section>
+
 @endif
 
 <section class="project-workflow">
@@ -178,7 +368,10 @@
 
         @foreach ($workflowColumns as $column)
 
-            <div class="workflow-column">
+            <div
+    class="workflow-column"
+    data-status-column="{{ $column['key'] }}"
+>
 
                 <div class="workflow-column__header">
 
@@ -205,7 +398,15 @@
 
     data-project-id="{{ $project->id }}"
     data-project-title="{{ $project['title'] }}"
+
     data-project-client="{{ $project->client?->name ?? 'No client' }}"
+    data-project-client-type="{{ $project->client?->type ?? '' }}"
+    data-project-client-location="{{ $project->client?->location ?? '' }}"
+    data-project-client-description="{{ $project->client?->description ?? '' }}"
+    data-project-client-contact="{{ $project->client?->contact_name ?? '' }}"
+    data-project-client-email="{{ $project->client?->contact_email ?? '' }}"
+    data-project-client-color="{{ $project->client?->accent_color ?? '#d0a323' }}"
+
     data-project-notes="{{ $project->notes->pluck('content')->toJson() }}"
     data-project-status="{{ $project['status'] }}"
     data-project-deadline="{{ $project['deadline'] }}"
@@ -261,9 +462,9 @@
                                         Deadline
                                     </span>
 
-                                    <strong>
-                                        {{ $project['deadline'] }}
-                                    </strong>
+                                    <strong data-card-deadline>
+    {{ $project['deadline'] }}
+</strong>
 
                                 </div>
 
@@ -369,13 +570,19 @@
 
 <div class="drawer-detail">
 
-    <span class="drawer-detail__label">
+    <label
+        class="drawer-detail__label"
+        for="project-deadline"
+    >
         Deadline
-    </span>
+    </label>
 
-    <strong data-drawer-deadline>
-        —
-    </strong>
+    <input
+        type="date"
+        id="project-deadline"
+        class="drawer-deadline-input"
+        data-drawer-deadline
+    >
 
 </div>
 
@@ -429,6 +636,62 @@
     >
         Add
     </button>
+
+</div>
+
+<div class="drawer-detail">
+
+    <span class="drawer-detail__label">
+        Client
+    </span>
+
+    <div
+        class="drawer-client-card"
+        data-drawer-client-card
+    >
+        <div
+            class="drawer-client-card__avatar"
+            data-drawer-client-avatar
+        >
+            CL
+        </div>
+
+        <div class="drawer-client-card__content">
+
+            <div class="drawer-client-card__heading">
+                <strong data-drawer-client-name>
+                    Client
+                </strong>
+
+                <span data-drawer-client-type>
+                    —
+                </span>
+            </div>
+
+            <p
+                class="drawer-client-card__location"
+                data-drawer-client-location
+            ></p>
+
+            <p
+                class="drawer-client-card__description"
+                data-drawer-client-description
+            ></p>
+
+            <div
+                class="drawer-client-card__contact"
+                data-drawer-client-contact-row
+            >
+                <span data-drawer-client-contact></span>
+
+                <a
+                    href="#"
+                    data-drawer-client-email
+                ></a>
+            </div>
+
+        </div>
+    </div>
 
 </div>
 

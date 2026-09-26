@@ -122,6 +122,11 @@ a {
    ========================================================= */
 
 .dashboard-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 48px;
+
     padding: 70px 0 28px;
 }
 
@@ -485,6 +490,15 @@ overwriting the SVG position.
     .client-stat {
         flex: 1;
     }
+
+    .dashboard-intro {
+    grid-template-columns: 1fr;
+    gap: 28px;
+}
+
+.deadline-widget {
+    width: 100%;
+}
 }
 
 .plant-sway {
@@ -855,7 +869,7 @@ overwriting the SVG position.
 
     border-radius: 50%;
 
-    background: #c49a25;
+    background: var(--client-accent, #c49a25);
     color: #171329;
 
     font-size: 11px;
@@ -2140,4 +2154,446 @@ both normally and during the happy animation.
         translateY(0)
         rotate(8deg)
         scale(1);
+}
+
+.drawer-deadline-input {
+    width: 100%;
+    margin-top: 8px;
+    padding: 11px 13px;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.04);
+    color: inherit;
+
+    font: inherit;
+    font-weight: 600;
+
+    outline: none;
+
+    transition:
+        border-color 160ms ease,
+        background 160ms ease;
+}
+
+.drawer-deadline-input:hover {
+    background: rgba(255, 255, 255, 0.065);
+}
+
+.drawer-deadline-input:focus {
+    border-color: rgba(176, 139, 255, 0.65);
+    background: rgba(255, 255, 255, 0.075);
+}
+
+.drawer-deadline-input:disabled {
+    opacity: 0.55;
+    cursor: wait;
+}
+
+.drawer-deadline-input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(1);
+    opacity: 0.65;
+}
+
+/* =========================================================
+   DRAWER CLIENT
+   ========================================================= */
+
+.drawer-client-card {
+    --client-accent: #d0a323;
+
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 13px;
+
+    padding: 15px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            color-mix(
+                in srgb,
+                var(--client-accent) 8%,
+                transparent
+            ),
+            rgba(255, 255, 255, 0.025)
+        );
+}
+
+.drawer-client-card__avatar {
+    width: 44px;
+    height: 44px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 13px;
+
+    color: #171329;
+
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+.drawer-client-card__content {
+    min-width: 0;
+}
+
+.drawer-client-card__heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.drawer-client-card__heading strong {
+    color: #f4f0f8;
+
+    font-size: 14px;
+}
+
+.drawer-client-card__heading span {
+    color: #8c869a;
+
+    font-size: 11px;
+}
+
+.drawer-client-card__location {
+    margin: 4px 0 0;
+
+    color: #928ca2;
+
+    font-size: 12px;
+}
+
+.drawer-client-card__description {
+    margin: 10px 0 0;
+
+    color: #b9b3c3;
+
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.drawer-client-card__contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 12px;
+
+    margin-top: 11px;
+    padding-top: 10px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+    color: #928ca2;
+
+    font-size: 11px;
+}
+
+.drawer-client-card__contact a {
+    color: var(--client-accent);
+
+    text-decoration: none;
+}
+
+.drawer-client-card__contact a:hover {
+    text-decoration: underline;
+}
+
+/* =========================================================
+   GENERIC CLIENT VISUAL
+   ========================================================= */
+
+.client-generic-visual {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 70% 25%,
+            color-mix(
+                in srgb,
+                var(--client-accent) 26%,
+                transparent
+            ),
+            transparent 34%
+        ),
+        linear-gradient(
+            145deg,
+            #292449,
+            #1f1b3a
+        );
+}
+
+
+.client-generic-visual__initials {
+    position: relative;
+    z-index: 2;
+
+    width: 92px;
+    height: 92px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid
+        color-mix(
+            in srgb,
+            var(--client-accent) 55%,
+            white
+        );
+
+    border-radius: 28px;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--client-accent) 75%,
+            #ffffff
+        );
+
+    color: #171329;
+
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.18);
+
+    transform: rotate(-4deg);
+
+    transition:
+        transform 300ms cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        );
+}
+
+
+.client-generic-visual__name {
+    position: relative;
+    z-index: 2;
+
+    margin-top: 16px;
+
+    color: rgba(255, 255, 255, 0.68);
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+
+.client-generic-visual__orb {
+    position: absolute;
+
+    border-radius: 50%;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--client-accent) 22%,
+            transparent
+        );
+
+    filter: blur(1px);
+}
+
+
+.client-generic-visual__orb--one {
+    width: 150px;
+    height: 150px;
+
+    top: -40px;
+    right: -20px;
+}
+
+
+.client-generic-visual__orb--two {
+    width: 90px;
+    height: 90px;
+
+    bottom: -20px;
+    left: 18%;
+
+    opacity: 0.55;
+}
+
+
+.client-overview__content:hover
+.client-generic-visual__initials {
+    transform:
+        rotate(2deg)
+        translateY(-4px);
+}
+
+/* =========================================================
+   NEXT DEADLINE
+   ========================================================= */
+
+.deadline-widget {
+    width: 310px;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 78px;
+    align-items: center;
+    gap: 22px;
+
+    padding: 18px 18px 18px 20px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.055),
+            rgba(255, 255, 255, 0.02)
+        );
+
+    color: inherit;
+    text-align: left;
+
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.12);
+
+    cursor: pointer;
+
+    transition:
+        transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 220ms ease,
+        background 220ms ease;
+}
+
+.deadline-widget:hover {
+    transform: translateY(-4px);
+
+    border-color: rgba(212, 165, 38, 0.35);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.075),
+            rgba(255, 255, 255, 0.03)
+        );
+}
+
+.deadline-widget__copy {
+    min-width: 0;
+}
+
+.deadline-widget__eyebrow {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #8e88a1;
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.deadline-widget__title {
+    display: block;
+
+    overflow: hidden;
+
+    color: #eeeaf8;
+
+    font-size: 14px;
+    line-height: 1.3;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.deadline-widget__meta {
+    display: block;
+
+    margin-top: 6px;
+
+    color: #9690a5;
+
+    font-size: 11px;
+}
+
+.deadline-widget__ring {
+    width: 70px;
+    height: 70px;
+
+    display: grid;
+    place-content: center;
+
+    border: 1px solid rgba(212, 165, 38, 0.35);
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(212, 165, 38, 0.11),
+            rgba(212, 165, 38, 0.025)
+        );
+
+    box-shadow:
+        inset 0 0 0 5px rgba(212, 165, 38, 0.035);
+
+    text-align: center;
+}
+
+.deadline-widget__ring strong {
+    display: block;
+
+    color: #e4bd4b;
+
+    font-size: 21px;
+    line-height: 1;
+}
+
+.deadline-widget__ring span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #888195;
+
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.deadline-widget__today {
+    font-size: 12px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.deadline-widget--empty {
+    cursor: default;
+}
+
+.deadline-widget--empty:hover {
+    transform: none;
 }

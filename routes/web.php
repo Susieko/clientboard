@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Models\Project;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Carbon;
+use App\Http\Controllers\ClientController;
 
 
 Route::get('/', function () {
@@ -234,6 +235,10 @@ $clientCount = $selectedClient
     ]);
 });
 
+Route::post(
+    '/projects',
+    [ProjectController::class, 'store']
+)->name('projects.store');
 
 Route::patch(
     '/projects/{project}/progress',
@@ -254,3 +259,13 @@ Route::post(
     '/projects/{project}/notes',
     [NoteController::class, 'store']
 )->name('projects.notes.store');
+
+Route::post(
+    '/clients',
+    [ClientController::class, 'store']
+)->name('clients.store');
+
+Route::patch(
+    '/projects/{project}/client',
+    [ProjectController::class, 'updateClient']
+)->name('projects.client.update');

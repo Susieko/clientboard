@@ -7,6 +7,81 @@ use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
+    public function updateClient(Request $request, Project $project)
+{
+    $validated = $request->validate([
+        'client_id' => [
+            'required',
+            'exists:clients,id',
+        ],
+    ]);
+
+    $project->update([
+        'client_id' => $validated['client_id'],
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'client_id' => $project->client_id,
+    ]);
+}
+    public function store(Request $request)
+{
+    $validated = $request->validate([
+        'title' => [
+            'required',
+            'string',
+            'max:255',
+        ],
+
+        'client_id' => [
+            'required',
+            'exists:clients,id',
+        ],
+
+        'status' => [
+            'required',
+            'in:design,development,feedback,done',
+        ],
+
+        'deadline' => [
+            'nullable',
+            'date',
+        ],
+
+        'progress' => [
+            'required',
+            'integer',
+            'min:0',
+            'max:100',
+        ],
+    ]);
+
+
+    $project = Project::create($validated);
+
+    $project->load('client');
+
+
+    return response()->json([
+        'success' => true,
+
+        'project' => [
+            'id' => $project->id,
+            'title' => $project->title,
+            'status' => $project->status,
+            'deadline' => $project->deadline,
+            'progress' => $project->progress,
+
+            'client' => [
+                'id' => $project->client->id,
+                'name' => $project->client->name,
+                'slug' => $project->client->slug,
+            ],
+        ],
+    ]);
+}
+
     public function updateProgress(Request $request, Project $project)
     {
         $validated = $request->validate([

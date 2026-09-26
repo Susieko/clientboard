@@ -9,6 +9,10 @@ const drawerClient = document.querySelector('[data-drawer-client]')
 const drawerDeadline = document.querySelector('[data-drawer-deadline]')
 const drawerNotes = document.querySelector('[data-drawer-notes]')
 
+const drawerClientSelect = document.querySelector(
+    '[data-drawer-client-select]'
+)
+
 const statusButtons = document.querySelectorAll('[data-status-button]')
 
 const drawerClientCard = document.querySelector(
@@ -66,7 +70,7 @@ let activeProjectCard = null
 
 
 /* =========================================================
-   OPEN PROJECT DRAWER
+   HELPERS
    ========================================================= */
 
 function getClientInitials(name) {
@@ -79,31 +83,112 @@ function getClientInitials(name) {
         .toUpperCase()
 }
 
+
+function updateProgressUI(value) {
+    if (progressSlider) {
+        progressSlider.value = value
+
+        progressSlider.style.setProperty(
+            '--progress',
+            `${value}%`
+        )
+    }
+
+    if (progressLabel) {
+        progressLabel.textContent =
+            `${value}%`
+    }
+
+    if (activeProjectCard) {
+        const cardLabel =
+            activeProjectCard.querySelector(
+                '.project-card__progress-info strong'
+            )
+
+        const cardBar =
+            activeProjectCard.querySelector(
+                '.progress-track span'
+            )
+
+        if (cardLabel) {
+            cardLabel.textContent =
+                `${value}%`
+        }
+
+        if (cardBar) {
+            cardBar.style.width =
+                `${value}%`
+        }
+    }
+}
+
+
+function updateColumnCounts() {
+    document
+        .querySelectorAll(
+            '[data-status-column]'
+        )
+        .forEach((column) => {
+            const count =
+                column.querySelectorAll(
+                    '.project-card'
+                ).length
+
+            const countElement =
+                column.querySelector(
+                    '.workflow-column__count'
+                )
+
+            if (countElement) {
+                countElement.textContent =
+                    count
+            }
+        })
+}
+
+
+/* =========================================================
+   OPEN PROJECT DRAWER
+   ========================================================= */
+
 function openDrawer(card) {
     activeProjectCard = card
 
-    const title = card.dataset.projectTitle
-    const client = card.dataset.projectClient
+    const title =
+        card.dataset.projectTitle
+
+    const client =
+        card.dataset.projectClient
+
+    const clientId =
+        card.dataset.projectClientId
+
     const clientType =
-    card.dataset.projectClientType
+        card.dataset.projectClientType
 
-const clientLocation =
-    card.dataset.projectClientLocation
+    const clientLocation =
+        card.dataset.projectClientLocation
 
-const clientDescription =
-    card.dataset.projectClientDescription
+    const clientDescription =
+        card.dataset.projectClientDescription
 
-const clientContact =
-    card.dataset.projectClientContact
+    const clientContact =
+        card.dataset.projectClientContact
 
-const clientEmail =
-    card.dataset.projectClientEmail
+    const clientEmail =
+        card.dataset.projectClientEmail
 
-const clientColor =
-    card.dataset.projectClientColor
-    const status = card.dataset.projectStatus
-    const deadline = card.dataset.projectDeadline
-    const progress = card.dataset.projectProgress
+    const clientColor =
+        card.dataset.projectClientColor
+
+    const status =
+        card.dataset.projectStatus
+
+    const deadline =
+        card.dataset.projectDeadline
+
+    const progress =
+        card.dataset.projectProgress
 
     const notes = JSON.parse(
         card.dataset.projectNotes || '[]'
@@ -111,62 +196,6 @@ const clientColor =
 
 
     /* Project info */
-
-    /* Client details */
-
-if (drawerClientName) {
-    drawerClientName.textContent = client
-}
-
-if (drawerClientAvatar) {
-    drawerClientAvatar.textContent =
-        getClientInitials(client)
-
-    drawerClientAvatar.style.background =
-        clientColor
-}
-
-if (drawerClientType) {
-    drawerClientType.textContent =
-        clientType || 'Client'
-}
-
-if (drawerClientLocation) {
-    drawerClientLocation.textContent =
-        clientLocation || ''
-}
-
-if (drawerClientDescription) {
-    drawerClientDescription.textContent =
-        clientDescription || ''
-}
-
-if (drawerClientContact) {
-    drawerClientContact.textContent =
-        clientContact || ''
-}
-
-if (drawerClientEmail) {
-    drawerClientEmail.textContent =
-        clientEmail || ''
-
-    drawerClientEmail.href =
-        clientEmail
-            ? `mailto:${clientEmail}`
-            : '#'
-}
-
-if (drawerClientContactRow) {
-    drawerClientContactRow.hidden =
-        !clientContact && !clientEmail
-}
-
-if (drawerClientCard) {
-    drawerClientCard.style.setProperty(
-        '--client-accent',
-        clientColor
-    )
-}
 
     if (drawerTitle) {
         drawerTitle.textContent = title
@@ -177,7 +206,72 @@ if (drawerClientCard) {
     }
 
     if (drawerDeadline) {
-        drawerDeadline.value = deadline || ''
+        drawerDeadline.value =
+            deadline || ''
+    }
+
+    if (drawerClientSelect) {
+        drawerClientSelect.value =
+            clientId || ''
+    }
+
+
+    /* Client details */
+
+    if (drawerClientName) {
+        drawerClientName.textContent =
+            client
+    }
+
+    if (drawerClientAvatar) {
+        drawerClientAvatar.textContent =
+            getClientInitials(client)
+
+        drawerClientAvatar.style.background =
+            clientColor
+    }
+
+    if (drawerClientType) {
+        drawerClientType.textContent =
+            clientType || 'Client'
+    }
+
+    if (drawerClientLocation) {
+        drawerClientLocation.textContent =
+            clientLocation || ''
+    }
+
+    if (drawerClientDescription) {
+        drawerClientDescription.textContent =
+            clientDescription || ''
+    }
+
+    if (drawerClientContact) {
+        drawerClientContact.textContent =
+            clientContact || ''
+    }
+
+    if (drawerClientEmail) {
+        drawerClientEmail.textContent =
+            clientEmail || ''
+
+        drawerClientEmail.href =
+            clientEmail
+                ? `mailto:${clientEmail}`
+                : '#'
+    }
+
+    if (drawerClientContactRow) {
+        drawerClientContactRow.hidden =
+            !clientContact &&
+            !clientEmail
+    }
+
+    if (drawerClientCard) {
+        drawerClientCard.style.setProperty(
+            '--client-accent',
+            clientColor
+        )
     }
 
 
@@ -185,7 +279,8 @@ if (drawerClientCard) {
 
     statusButtons.forEach((button) => {
         const isActive =
-            button.dataset.statusButton === status
+            button.dataset.statusButton ===
+            status
 
         button.classList.toggle(
             'is-active',
@@ -212,7 +307,6 @@ if (drawerClientCard) {
             `
         } else {
             notes.forEach((note) => {
-
                 const item =
                     document.createElement('div')
 
@@ -235,14 +329,10 @@ if (drawerClientCard) {
     }
 
 
-    /* Clear note input */
-
     if (noteInput) {
         noteInput.value = ''
     }
 
-
-    /* Open drawer */
 
     drawer?.classList.add('is-open')
     backdrop?.classList.add('is-open')
@@ -276,114 +366,48 @@ function closeDrawer() {
    ========================================================= */
 
 projectCards.forEach((card) => {
-
-    card.addEventListener('click', () => {
-        openDrawer(card)
-    })
-
+    card.addEventListener(
+        'click',
+        () => {
+            openDrawer(card)
+        }
+    )
 
     card.addEventListener(
         'keydown',
         (event) => {
-
             if (
                 event.key === 'Enter' ||
                 event.key === ' '
             ) {
                 event.preventDefault()
-
                 openDrawer(card)
             }
-
         }
     )
-
 })
-
-
-/* =========================================================
-   PROGRESS UI
-   ========================================================= */
-
-function updateProgressUI(value) {
-
-    if (progressSlider) {
-
-        progressSlider.value = value
-
-        progressSlider.style.setProperty(
-            '--progress',
-            `${value}%`
-        )
-
-    }
-
-
-    if (progressLabel) {
-        progressLabel.textContent =
-            `${value}%`
-    }
-
-
-    if (activeProjectCard) {
-
-        const cardLabel =
-            activeProjectCard.querySelector(
-                '.project-card__progress-info strong'
-            )
-
-        const cardBar =
-            activeProjectCard.querySelector(
-                '.progress-track span'
-            )
-
-
-        if (cardLabel) {
-            cardLabel.textContent =
-                `${value}%`
-        }
-
-
-        if (cardBar) {
-            cardBar.style.width =
-                `${value}%`
-        }
-
-    }
-
-}
 
 
 /* =========================================================
    PROGRESS SLIDER
    ========================================================= */
 
-/*
- * Visual update while dragging.
- */
 progressSlider?.addEventListener(
     'input',
     (event) => {
-
         updateProgressUI(
             event.target.value
         )
-
     }
 )
 
 
-/*
- * Save to Laravel when released.
- */
 progressSlider?.addEventListener(
     'change',
     async (event) => {
-
         if (!activeProjectCard) {
             return
         }
-
 
         const projectId =
             activeProjectCard.dataset.projectId
@@ -394,44 +418,38 @@ progressSlider?.addEventListener(
         const newProgress =
             event.target.value
 
-
         progressSlider.disabled = true
 
-
         try {
+            const response =
+                await fetch(
+                    `/projects/${projectId}/progress`,
+                    {
+                        method: 'PATCH',
 
-            const response = await fetch(
-                `/projects/${projectId}/progress`,
-                {
-                    method: 'PATCH',
+                        headers: {
+                            'Content-Type':
+                                'application/json',
 
-                    headers: {
-                        'Content-Type':
-                            'application/json',
+                            'Accept':
+                                'application/json',
 
-                        'Accept':
-                            'application/json',
+                            'X-CSRF-TOKEN':
+                                csrfToken,
+                        },
 
-                        'X-CSRF-TOKEN':
-                            csrfToken,
-                    },
-
-                    body: JSON.stringify({
-                        progress:
-                            Number(newProgress),
-                    }),
-                }
-            )
-
+                        body: JSON.stringify({
+                            progress:
+                                Number(newProgress),
+                        }),
+                    }
+                )
 
             if (!response.ok) {
-
                 throw new Error(
                     'Could not save project progress.'
                 )
-
             }
-
 
             const data =
                 await response.json()
@@ -439,37 +457,29 @@ progressSlider?.addEventListener(
             const savedProgress =
                 String(data.progress)
 
-
             activeProjectCard
                 .dataset.projectProgress =
                 savedProgress
-
 
             updateProgressUI(
                 savedProgress
             )
 
         } catch (error) {
-
             console.error(error)
-
 
             updateProgressUI(
                 previousProgress
             )
-
 
             alert(
                 'Progress could not be saved.'
             )
 
         } finally {
-
             progressSlider.disabled =
                 false
-
         }
-
     }
 )
 
@@ -478,45 +488,13 @@ progressSlider?.addEventListener(
    PROJECT STATUS
    ========================================================= */
 
-function updateColumnCounts() {
-
-    document
-        .querySelectorAll(
-            '[data-status-column]'
-        )
-        .forEach((column) => {
-
-            const count =
-                column.querySelectorAll(
-                    '.project-card'
-                ).length
-
-            const countElement =
-                column.querySelector(
-                    '.workflow-column__count'
-                )
-
-
-            if (countElement) {
-                countElement.textContent =
-                    count
-            }
-
-        })
-
-}
-
-
 statusButtons.forEach((button) => {
-
     button.addEventListener(
         'click',
         async () => {
-
             if (!activeProjectCard) {
                 return
             }
-
 
             const projectId =
                 activeProjectCard
@@ -529,7 +507,6 @@ statusButtons.forEach((button) => {
             const newStatus =
                 button.dataset.statusButton
 
-
             if (
                 previousStatus ===
                 newStatus
@@ -537,19 +514,14 @@ statusButtons.forEach((button) => {
                 return
             }
 
-
             statusButtons.forEach(
                 (statusButton) => {
-
                     statusButton.disabled =
                         true
-
                 }
             )
 
-
             try {
-
                 const response =
                     await fetch(
                         `/projects/${projectId}/status`,
@@ -575,15 +547,11 @@ statusButtons.forEach((button) => {
                         }
                     )
 
-
                 if (!response.ok) {
-
                     throw new Error(
                         'Could not save project status.'
                     )
-
                 }
-
 
                 const data =
                     await response.json()
@@ -591,24 +559,12 @@ statusButtons.forEach((button) => {
                 const savedStatus =
                     data.status
 
-
-                /*
-                 * Save new status
-                 * on the card itself.
-                 */
-
                 activeProjectCard
                     .dataset.projectStatus =
                     savedStatus
 
-
-                /*
-                 * Update status buttons.
-                 */
-
                 statusButtons.forEach(
                     (statusButton) => {
-
                         statusButton
                             .classList
                             .toggle(
@@ -619,15 +575,8 @@ statusButtons.forEach((button) => {
                                     .statusButton ===
                                     savedStatus
                             )
-
                     }
                 )
-
-
-                /*
-                 * Move project card
-                 * to the new column.
-                 */
 
                 const targetColumn =
                     document.querySelector(
@@ -640,47 +589,35 @@ statusButtons.forEach((button) => {
                             '.workflow-column__cards'
                         )
 
-
                 if (
                     targetCardContainer &&
                     activeProjectCard
                 ) {
-
                     targetCardContainer
                         .appendChild(
                             activeProjectCard
                         )
-
                 }
-
 
                 updateColumnCounts()
 
             } catch (error) {
-
                 console.error(error)
-
 
                 alert(
                     'Project status could not be saved.'
                 )
 
             } finally {
-
                 statusButtons.forEach(
                     (statusButton) => {
-
                         statusButton.disabled =
                             false
-
                     }
                 )
-
             }
-
         }
     )
-
 })
 
 
@@ -691,60 +628,54 @@ statusButtons.forEach((button) => {
 drawerDeadline?.addEventListener(
     'change',
     async (event) => {
-
         if (!activeProjectCard) {
             return
         }
-
 
         const projectId =
             activeProjectCard.dataset.projectId
 
         const previousDeadline =
-            activeProjectCard.dataset
-                .projectDeadline
+            activeProjectCard
+                .dataset.projectDeadline
 
         const newDeadline =
             event.target.value
 
-
         drawerDeadline.disabled = true
 
-
         try {
+            const response =
+                await fetch(
+                    `/projects/${projectId}/deadline`,
+                    {
+                        method: 'PATCH',
 
-            const response = await fetch(
-                `/projects/${projectId}/deadline`,
-                {
-                    method: 'PATCH',
+                        headers: {
+                            'Content-Type':
+                                'application/json',
 
-                    headers: {
-                        'Content-Type':
-                            'application/json',
+                            'Accept':
+                                'application/json',
 
-                        'Accept':
-                            'application/json',
+                            'X-CSRF-TOKEN':
+                                csrfToken,
+                        },
 
-                        'X-CSRF-TOKEN':
-                            csrfToken,
-                    },
-
-                    body: JSON.stringify({
-                        deadline:
-                            newDeadline || null,
-                    }),
-                }
-            )
-
+                        body:
+                            JSON.stringify({
+                                deadline:
+                                    newDeadline ||
+                                    null,
+                            }),
+                    }
+                )
 
             if (!response.ok) {
-
                 throw new Error(
                     'Could not save project deadline.'
                 )
-
             }
-
 
             const data =
                 await response.json()
@@ -752,21 +683,9 @@ drawerDeadline?.addEventListener(
             const savedDeadline =
                 data.deadline || ''
 
-
-            /*
-             * Save deadline
-             * on project card.
-             */
-
             activeProjectCard
                 .dataset.projectDeadline =
                 savedDeadline
-
-
-            /*
-             * Update visible deadline
-             * on project card.
-             */
 
             const cardDeadline =
                 activeProjectCard
@@ -774,43 +693,134 @@ drawerDeadline?.addEventListener(
                         '[data-card-deadline]'
                     )
 
-
             if (cardDeadline) {
-
                 cardDeadline.textContent =
                     savedDeadline ||
                     'No deadline'
-
             }
-
-
-            /*
-             * Keep drawer synced.
-             */
 
             drawerDeadline.value =
                 savedDeadline
 
         } catch (error) {
-
             console.error(error)
-
 
             drawerDeadline.value =
                 previousDeadline || ''
-
 
             alert(
                 'Project deadline could not be saved.'
             )
 
         } finally {
-
             drawerDeadline.disabled =
                 false
+        }
+    }
+)
 
+
+/* =========================================================
+   PROJECT CLIENT
+   ========================================================= */
+
+drawerClientSelect?.addEventListener(
+    'change',
+    async (event) => {
+        if (!activeProjectCard) {
+            return
         }
 
+        const projectId =
+            activeProjectCard
+                .dataset.projectId
+
+        const previousClientId =
+            activeProjectCard
+                .dataset.projectClientId
+
+        const newClientId =
+            event.target.value
+
+        if (
+            previousClientId ===
+            newClientId
+        ) {
+            return
+        }
+
+        drawerClientSelect.disabled =
+            true
+
+        try {
+            const response =
+                await fetch(
+                    `/projects/${projectId}/client`,
+                    {
+                        method: 'PATCH',
+
+                        headers: {
+                            'Content-Type':
+                                'application/json',
+
+                            'Accept':
+                                'application/json',
+
+                            'X-CSRF-TOKEN':
+                                csrfToken,
+                        },
+
+                        body:
+                            JSON.stringify({
+                                client_id:
+                                    Number(
+                                        newClientId
+                                    ),
+                            }),
+                    }
+                )
+
+            const data =
+                await response.json()
+
+            if (!response.ok) {
+                const validationErrors =
+                    data.errors
+                        ? Object.values(
+                            data.errors
+                        )
+                            .flat()
+                            .join(' ')
+                        : null
+
+                throw new Error(
+                    validationErrors ||
+                    data.message ||
+                    'Could not change client.'
+                )
+            }
+
+            /*
+             * Reload because the project may now
+             * belong to another filtered client.
+             */
+            window.location.reload()
+
+        } catch (error) {
+            console.error(error)
+
+            drawerClientSelect.value =
+                previousClientId
+
+            alert(
+                error.message ||
+                'Project client could not be changed.'
+            )
+
+        } finally {
+            drawerClientSelect.disabled =
+                false
+        }
     }
 )
 
@@ -822,7 +832,6 @@ drawerDeadline?.addEventListener(
 noteAddButton?.addEventListener(
     'click',
     async () => {
-
         if (
             !activeProjectCard ||
             !noteInput
@@ -830,28 +839,22 @@ noteAddButton?.addEventListener(
             return
         }
 
-
         const content =
             noteInput.value.trim()
-
 
         if (!content) {
             return
         }
 
-
         const projectId =
             activeProjectCard
                 .dataset.projectId
-
 
         noteAddButton.disabled = true
         noteAddButton.textContent =
             'Adding...'
 
-
         try {
-
             const response =
                 await fetch(
                     `/projects/${projectId}/notes`,
@@ -876,24 +879,14 @@ noteAddButton?.addEventListener(
                     }
                 )
 
-
             if (!response.ok) {
-
                 throw new Error(
                     'Could not save note.'
                 )
-
             }
-
 
             const data =
                 await response.json()
-
-
-            /*
-             * Create note
-             * in drawer.
-             */
 
             const noteElement =
                 document
@@ -903,12 +896,10 @@ noteAddButton?.addEventListener(
                 .classList
                 .add('drawer-note')
 
-
             noteElement.innerHTML = `
                 <span class="drawer-note__dot"></span>
                 <span></span>
             `
-
 
             noteElement
                 .querySelector(
@@ -917,27 +908,15 @@ noteAddButton?.addEventListener(
                 .textContent =
                 data.note.content
 
-
-            /*
-             * Remove empty state.
-             */
-
             drawerNotes
                 ?.querySelector(
                     '.drawer-notes__empty'
                 )
                 ?.remove()
 
-
             drawerNotes?.appendChild(
                 noteElement
             )
-
-
-            /*
-             * Update stored notes
-             * on project card.
-             */
 
             const existingNotes =
                 JSON.parse(
@@ -947,11 +926,9 @@ noteAddButton?.addEventListener(
                     '[]'
                 )
 
-
             existingNotes.push(
                 data.note.content
             )
-
 
             activeProjectCard
                 .dataset.projectNotes =
@@ -959,51 +936,35 @@ noteAddButton?.addEventListener(
                     existingNotes
                 )
 
-
-            /*
-             * Reset input.
-             */
-
             noteInput.value = ''
             noteInput.focus()
 
         } catch (error) {
-
             console.error(error)
-
 
             alert(
                 'The note could not be saved.'
             )
 
         } finally {
-
             noteAddButton.disabled =
                 false
 
             noteAddButton.textContent =
                 'Add'
-
         }
-
     }
 )
 
 
-/* Add note using Enter */
-
 noteInput?.addEventListener(
     'keydown',
     (event) => {
-
         if (event.key === 'Enter') {
-
             event.preventDefault()
 
             noteAddButton?.click()
-
         }
-
     }
 )
 
@@ -1017,23 +978,11 @@ closeButton?.addEventListener(
     closeDrawer
 )
 
-
 backdrop?.addEventListener(
     'click',
     closeDrawer
 )
 
-
-document.addEventListener(
-    'keydown',
-    (event) => {
-
-        if (event.key === 'Escape') {
-            closeDrawer()
-        }
-
-    }
-)
 
 /* =========================================================
    NEXT DEADLINE WIDGET
@@ -1044,27 +993,555 @@ const deadlineWidget =
         '[data-deadline-project]'
     )
 
-
 deadlineWidget?.addEventListener(
     'click',
     () => {
-
         const projectId =
-            deadlineWidget.dataset
-                .deadlineProject
+            deadlineWidget
+                .dataset.deadlineProject
 
         const projectCard =
             document.querySelector(
                 `[data-project-card][data-project-id="${projectId}"]`
             )
 
-
         if (projectCard) {
             openDrawer(projectCard)
         }
-
     }
 )
+
+
+/* =========================================================
+   NEW PROJECT MODAL
+   ========================================================= */
+
+const newProjectButton =
+    document.querySelector(
+        '[data-open-new-project]'
+    )
+
+const newProjectModal =
+    document.querySelector(
+        '[data-project-modal]'
+    )
+
+const newProjectBackdrop =
+    document.querySelector(
+        '[data-project-modal-backdrop]'
+    )
+
+const closeNewProjectButton =
+    document.querySelector(
+        '[data-close-new-project]'
+    )
+
+const cancelNewProjectButton =
+    document.querySelector(
+        '[data-cancel-new-project]'
+    )
+
+const newProjectForm =
+    document.querySelector(
+        '[data-new-project-form]'
+    )
+
+const newProjectSubmit =
+    document.querySelector(
+        '[data-submit-new-project]'
+    )
+
+const newProjectError =
+    document.querySelector(
+        '[data-new-project-error]'
+    )
+
+const newProjectProgress =
+    document.querySelector(
+        '[data-new-project-progress]'
+    )
+
+const newProjectProgressLabel =
+    document.querySelector(
+        '[data-new-project-progress-label]'
+    )
+
+
+function openNewProjectModal() {
+    newProjectModal?.classList.add(
+        'is-open'
+    )
+
+    newProjectBackdrop?.classList.add(
+        'is-open'
+    )
+
+    newProjectModal?.setAttribute(
+        'aria-hidden',
+        'false'
+    )
+
+    const titleInput =
+        newProjectForm?.querySelector(
+            '[name="title"]'
+        )
+
+    setTimeout(() => {
+        titleInput?.focus()
+    }, 100)
+}
+
+
+function closeNewProjectModal() {
+    newProjectModal?.classList.remove(
+        'is-open'
+    )
+
+    newProjectBackdrop?.classList.remove(
+        'is-open'
+    )
+
+    newProjectModal?.setAttribute(
+        'aria-hidden',
+        'true'
+    )
+
+    if (newProjectError) {
+        newProjectError.hidden = true
+        newProjectError.textContent = ''
+    }
+}
+
+
+newProjectButton?.addEventListener(
+    'click',
+    openNewProjectModal
+)
+
+closeNewProjectButton?.addEventListener(
+    'click',
+    closeNewProjectModal
+)
+
+cancelNewProjectButton?.addEventListener(
+    'click',
+    closeNewProjectModal
+)
+
+newProjectBackdrop?.addEventListener(
+    'click',
+    closeNewProjectModal
+)
+
+
+newProjectProgress?.addEventListener(
+    'input',
+    (event) => {
+        if (
+            newProjectProgressLabel
+        ) {
+            newProjectProgressLabel
+                .textContent =
+                `${event.target.value}%`
+        }
+    }
+)
+
+
+newProjectForm?.addEventListener(
+    'submit',
+    async (event) => {
+        event.preventDefault()
+
+        const formData =
+            new FormData(
+                newProjectForm
+            )
+
+        const projectData = {
+            title:
+                formData.get('title'),
+
+            client_id:
+                Number(
+                    formData.get(
+                        'client_id'
+                    )
+                ),
+
+            status:
+                formData.get('status'),
+
+            deadline:
+                formData.get(
+                    'deadline'
+                ) || null,
+
+            progress:
+                Number(
+                    formData.get(
+                        'progress'
+                    )
+                ),
+        }
+
+        if (newProjectError) {
+            newProjectError.hidden =
+                true
+        }
+
+        newProjectSubmit.disabled =
+            true
+
+        newProjectSubmit.textContent =
+            'Creating...'
+
+        try {
+            const response =
+                await fetch(
+                    '/projects',
+                    {
+                        method: 'POST',
+
+                        headers: {
+                            'Content-Type':
+                                'application/json',
+
+                            'Accept':
+                                'application/json',
+
+                            'X-CSRF-TOKEN':
+                                csrfToken,
+                        },
+
+                        body:
+                            JSON.stringify(
+                                projectData
+                            ),
+                    }
+                )
+
+            const data =
+                await response.json()
+
+            if (!response.ok) {
+                const validationErrors =
+                    data.errors
+                        ? Object.values(
+                            data.errors
+                        )
+                            .flat()
+                            .join(' ')
+                        : null
+
+                throw new Error(
+                    validationErrors ||
+                    data.message ||
+                    'Could not create project.'
+                )
+            }
+
+            window.location.reload()
+
+        } catch (error) {
+            console.error(error)
+
+            if (newProjectError) {
+                newProjectError
+                    .textContent =
+                    error.message
+
+                newProjectError.hidden =
+                    false
+            }
+
+        } finally {
+            newProjectSubmit.disabled =
+                false
+
+            newProjectSubmit.textContent =
+                'Create project'
+        }
+    }
+)
+
+
+/* =========================================================
+   ADD CLIENT MODAL
+   ========================================================= */
+
+const addClientButton =
+    document.querySelector(
+        '[data-open-add-client]'
+    )
+
+const clientModal =
+    document.querySelector(
+        '[data-client-modal]'
+    )
+
+const clientModalBackdrop =
+    document.querySelector(
+        '[data-client-modal-backdrop]'
+    )
+
+const closeClientModalButton =
+    document.querySelector(
+        '[data-close-add-client]'
+    )
+
+const cancelClientButton =
+    document.querySelector(
+        '[data-cancel-add-client]'
+    )
+
+const addClientForm =
+    document.querySelector(
+        '[data-add-client-form]'
+    )
+
+const addClientSubmit =
+    document.querySelector(
+        '[data-submit-add-client]'
+    )
+
+const addClientError =
+    document.querySelector(
+        '[data-add-client-error]'
+    )
+
+const clientColor =
+    document.querySelector(
+        '[data-client-color]'
+    )
+
+const clientColorValue =
+    document.querySelector(
+        '[data-client-color-value]'
+    )
+
+
+function openClientModal() {
+    clientModal?.classList.add(
+        'is-open'
+    )
+
+    clientModalBackdrop?.classList.add(
+        'is-open'
+    )
+
+    clientModal?.setAttribute(
+        'aria-hidden',
+        'false'
+    )
+
+    const nameInput =
+        addClientForm?.querySelector(
+            '[name="name"]'
+        )
+
+    setTimeout(() => {
+        nameInput?.focus()
+    }, 100)
+}
+
+
+function closeClientModal() {
+    clientModal?.classList.remove(
+        'is-open'
+    )
+
+    clientModalBackdrop?.classList.remove(
+        'is-open'
+    )
+
+    clientModal?.setAttribute(
+        'aria-hidden',
+        'true'
+    )
+
+    if (addClientError) {
+        addClientError.hidden = true
+        addClientError.textContent = ''
+    }
+}
+
+
+addClientButton?.addEventListener(
+    'click',
+    openClientModal
+)
+
+closeClientModalButton?.addEventListener(
+    'click',
+    closeClientModal
+)
+
+cancelClientButton?.addEventListener(
+    'click',
+    closeClientModal
+)
+
+clientModalBackdrop?.addEventListener(
+    'click',
+    closeClientModal
+)
+
+
+clientColor?.addEventListener(
+    'input',
+    (event) => {
+        if (clientColorValue) {
+            clientColorValue.textContent =
+                event.target.value
+        }
+    }
+)
+
+
+addClientForm?.addEventListener(
+    'submit',
+    async (event) => {
+        event.preventDefault()
+
+        const formData =
+            new FormData(
+                addClientForm
+            )
+
+        const clientData = {
+            name:
+                formData.get('name'),
+
+            type:
+                formData.get('type') ||
+                null,
+
+            location:
+                formData.get(
+                    'location'
+                ) || null,
+
+            description:
+                formData.get(
+                    'description'
+                ) || null,
+
+            contact_name:
+                formData.get(
+                    'contact_name'
+                ) || null,
+
+            contact_email:
+                formData.get(
+                    'contact_email'
+                ) || null,
+
+            accent_color:
+                formData.get(
+                    'accent_color'
+                ),
+        }
+
+        if (addClientError) {
+            addClientError.hidden =
+                true
+        }
+
+        addClientSubmit.disabled =
+            true
+
+        addClientSubmit.textContent =
+            'Adding...'
+
+        try {
+            const response =
+                await fetch(
+                    '/clients',
+                    {
+                        method: 'POST',
+
+                        headers: {
+                            'Content-Type':
+                                'application/json',
+
+                            'Accept':
+                                'application/json',
+
+                            'X-CSRF-TOKEN':
+                                csrfToken,
+                        },
+
+                        body:
+                            JSON.stringify(
+                                clientData
+                            ),
+                    }
+                )
+
+            const data =
+                await response.json()
+
+            if (!response.ok) {
+                const validationErrors =
+                    data.errors
+                        ? Object.values(
+                            data.errors
+                        )
+                            .flat()
+                            .join(' ')
+                        : null
+
+                throw new Error(
+                    validationErrors ||
+                    data.message ||
+                    'Could not create client.'
+                )
+            }
+
+            window.location.href =
+                `/?client=${encodeURIComponent(
+                    data.client.slug
+                )}`
+
+        } catch (error) {
+            console.error(error)
+
+            if (addClientError) {
+                addClientError
+                    .textContent =
+                    error.message
+
+                addClientError.hidden =
+                    false
+            }
+
+        } finally {
+            addClientSubmit.disabled =
+                false
+
+            addClientSubmit.textContent =
+                'Add client'
+        }
+    }
+)
+
+
+/* =========================================================
+   ESCAPE KEY
+   ========================================================= */
+
+document.addEventListener(
+    'keydown',
+    (event) => {
+        if (event.key === 'Escape') {
+            closeDrawer()
+            closeNewProjectModal()
+            closeClientModal()
+        }
+    }
+)
+
 
 /* =========================================================
    CLIENTBOARD MASCOT EYES
@@ -1075,31 +1552,24 @@ const mascot =
         '[data-brand-mascot]'
     )
 
-
 if (mascot) {
-
     const eyes =
         mascot.querySelectorAll(
             '.mascot-eye'
         )
 
-
     window.addEventListener(
         'mousemove',
         (event) => {
-
             eyes.forEach((eye) => {
-
                 const pupil =
                     eye.querySelector(
                         '.mascot-pupil'
                     )
 
-
                 if (!pupil) {
                     return
                 }
-
 
                 const rect =
                     eye.getBoundingClientRect()
@@ -1112,7 +1582,6 @@ if (mascot) {
                     rect.top +
                     rect.height / 2
 
-
                 const angle =
                     Math.atan2(
                         event.clientY -
@@ -1121,7 +1590,6 @@ if (mascot) {
                         event.clientX -
                             centerX
                     )
-
 
                 const distance = 2
 
@@ -1133,41 +1601,30 @@ if (mascot) {
                     Math.sin(angle) *
                     distance
 
-
                 pupil.style.transform =
                     `translate(${x}px, ${y}px)`
-
             })
-
         }
     )
-
 
     document.documentElement
         .addEventListener(
             'mouseleave',
             () => {
-
                 eyes.forEach(
                     (eye) => {
-
                         const pupil =
                             eye.querySelector(
                                 '.mascot-pupil'
                             )
 
-
                         if (pupil) {
-
                             pupil.style
                                 .transform =
                                 'translate(0, 0)'
-
                         }
-
                     }
                 )
-
             }
         )
 }

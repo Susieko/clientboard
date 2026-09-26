@@ -52,10 +52,13 @@
 
 </a>
 
-            <button class="new-project-button">
-                <span>+</span>
-                New project
-            </button>
+<button
+    type="button"
+    class="new-project-button"
+    data-open-new-project
+>
+    + New project
+</button>
         </header>
 
 <section class="dashboard-intro">
@@ -188,9 +191,10 @@
             class="client-filter {{ $selectedSlug === $client['slug'] ? 'is-active' : '' }}"
         >
 
-            <span
-                class="client-dot client-dot--{{ $client['slug'] }}"
-            ></span>
+<span
+    class="client-dot"
+    style="background: {{ $client->accent_color ?? '#d4a526' }}"
+></span>
 
             {{ $client['name'] }}
 
@@ -200,10 +204,13 @@
 
 </div>
 
-    <button class="add-client-button" type="button">
-        <span>+</span>
-        Add client
-    </button>
+<button
+    type="button"
+    class="add-client-button"
+    data-open-add-client
+>
+    + Add client
+</button>
 
 </section>
 
@@ -400,6 +407,7 @@
     data-project-title="{{ $project['title'] }}"
 
     data-project-client="{{ $project->client?->name ?? 'No client' }}"
+    data-project-client-id="{{ $project->client_id }}"
     data-project-client-type="{{ $project->client?->type ?? '' }}"
     data-project-client-location="{{ $project->client?->location ?? '' }}"
     data-project-client-description="{{ $project->client?->description ?? '' }}"
@@ -485,6 +493,368 @@
 </section>
 
     </main>
+<div
+    class="client-modal-backdrop"
+    data-client-modal-backdrop
+></div>
+
+<div
+    class="client-modal"
+    data-client-modal
+    aria-hidden="true"
+>
+    <div class="client-modal__header">
+
+        <div>
+            <span class="client-modal__eyebrow">
+                New client
+            </span>
+
+            <h2>
+                Who are we building for?
+            </h2>
+        </div>
+
+        <button
+            type="button"
+            class="client-modal__close"
+            data-close-add-client
+            aria-label="Close client form"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <form
+        class="client-modal__form"
+        data-add-client-form
+    >
+
+        <label class="project-field">
+            <span>Client name</span>
+
+            <input
+                type="text"
+                name="name"
+                placeholder="e.g. BirbBuds"
+                maxlength="255"
+                required
+            >
+        </label>
+
+
+        <div class="project-modal__row">
+
+            <label class="project-field">
+                <span>Type</span>
+
+                <input
+                    type="text"
+                    name="type"
+                    placeholder="Non-profit, Company..."
+                >
+            </label>
+
+
+            <label class="project-field">
+                <span>Location</span>
+
+                <input
+                    type="text"
+                    name="location"
+                    placeholder="Tilburg"
+                >
+            </label>
+
+        </div>
+
+
+        <label class="project-field">
+            <span>Description</span>
+
+            <textarea
+                name="description"
+                class="client-description-input"
+                maxlength="1000"
+                rows="4"
+                placeholder="What does this client do?"
+            ></textarea>
+        </label>
+
+
+        <div class="project-modal__row">
+
+            <label class="project-field">
+                <span>Contact person</span>
+
+                <input
+                    type="text"
+                    name="contact_name"
+                    placeholder="Jan"
+                >
+            </label>
+
+
+            <label class="project-field">
+                <span>Email</span>
+
+                <input
+                    type="email"
+                    name="contact_email"
+                    placeholder="hello@example.nl"
+                >
+            </label>
+
+        </div>
+
+
+        <label class="project-field">
+
+            <span>Accent colour</span>
+
+            <div class="client-color-field">
+
+                <input
+                    type="color"
+                    name="accent_color"
+                    value="#d4a526"
+                    data-client-color
+                >
+
+                <span data-client-color-value>
+                    #d4a526
+                </span>
+
+            </div>
+
+        </label>
+
+
+        <p
+            class="project-modal__error"
+            data-add-client-error
+            hidden
+        ></p>
+
+
+        <div class="project-modal__actions">
+
+            <button
+                type="button"
+                class="project-modal__cancel"
+                data-cancel-add-client
+            >
+                Cancel
+            </button>
+
+            <button
+                type="submit"
+                class="project-modal__submit"
+                data-submit-add-client
+            >
+                Add client
+            </button>
+
+        </div>
+
+    </form>
+</div>
+
+    <div
+    class="project-modal-backdrop"
+    data-project-modal-backdrop
+></div>
+
+<div
+    class="project-modal"
+    data-project-modal
+    aria-hidden="true"
+>
+    <div class="project-modal__header">
+
+        <div>
+            <span class="project-modal__eyebrow">
+                New project
+            </span>
+
+            <h2>
+                Add something to the board.
+            </h2>
+        </div>
+
+        <button
+            type="button"
+            class="project-modal__close"
+            data-close-new-project
+            aria-label="Close new project form"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <form
+        class="project-modal__form"
+        data-new-project-form
+    >
+
+        <label class="project-field">
+
+            <span>
+                Project name
+            </span>
+
+            <input
+                type="text"
+                name="title"
+                placeholder="e.g. Clientboard redesign"
+                maxlength="255"
+                required
+                autofocus
+            >
+
+        </label>
+
+
+        <label class="project-field">
+
+            <span>
+                Client
+            </span>
+
+            <select
+                name="client_id"
+                required
+            >
+
+                <option value="" disabled
+                    @selected(!$selectedClient)
+                >
+                    Choose a client
+                </option>
+
+                @foreach ($clients as $client)
+
+                    <option
+                        value="{{ $client->id }}"
+                        @selected(
+                            $selectedClient?->id === $client->id
+                        )
+                    >
+                        {{ $client->name }}
+                    </option>
+
+                @endforeach
+
+            </select>
+
+        </label>
+
+        <div class="project-modal__row">
+
+            <label class="project-field">
+
+                <span>
+                    Status
+                </span>
+
+                <select name="status">
+
+                    <option value="design" selected>
+                        Design
+                    </option>
+
+                    <option value="development">
+                        Development
+                    </option>
+
+                    <option value="feedback">
+                        Waiting for feedback
+                    </option>
+
+                    <option value="done">
+                        Done
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <label class="project-field">
+
+                <span>
+                    Deadline
+                </span>
+
+                <input
+                    type="date"
+                    name="deadline"
+                >
+
+            </label>
+
+        </div>
+
+
+        <label class="project-field">
+
+            <div class="project-field__heading">
+
+                <span>
+                    Progress
+                </span>
+
+                <strong data-new-project-progress-label>
+                    0%
+                </strong>
+
+            </div>
+
+            <input
+                type="range"
+                name="progress"
+                min="0"
+                max="100"
+                value="0"
+                data-new-project-progress
+            >
+
+        </label>
+
+
+        <p
+            class="project-modal__error"
+            data-new-project-error
+            hidden
+        ></p>
+
+
+        <div class="project-modal__actions">
+
+            <button
+                type="button"
+                class="project-modal__cancel"
+                data-cancel-new-project
+            >
+                Cancel
+            </button>
+
+            <button
+                type="submit"
+                class="project-modal__submit"
+                data-submit-new-project
+            >
+                Create project
+            </button>
+
+        </div>
+
+    </form>
+</div>
 
     <div
     class="drawer-backdrop"
@@ -522,6 +892,33 @@
 
 <div class="drawer-project-client" data-drawer-client>
     Client
+</div>
+
+<div class="drawer-detail">
+
+    <label
+        class="drawer-detail__label"
+        for="drawer-project-client"
+    >
+        Client
+    </label>
+
+    <select
+        id="drawer-project-client"
+        class="drawer-client-select"
+        data-drawer-client-select
+    >
+
+        @foreach ($clients as $client)
+
+            <option value="{{ $client->id }}">
+                {{ $client->name }}
+            </option>
+
+        @endforeach
+
+    </select>
+
 </div>
 
 <div class="drawer-detail">

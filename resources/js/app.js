@@ -335,3 +335,47 @@ document.addEventListener('keydown', (event) => {
     }
 
 })
+
+/* =========================================================
+   CLIENTBOARD MASCOT EYES
+   ========================================================= */
+
+const mascot = document.querySelector('[data-brand-mascot]')
+
+if (mascot) {
+    const eyes = mascot.querySelectorAll('.mascot-eye')
+
+    window.addEventListener('mousemove', (event) => {
+
+        eyes.forEach((eye) => {
+            const pupil = eye.querySelector('.mascot-pupil')
+
+            const rect = eye.getBoundingClientRect()
+
+            const centerX = rect.left + rect.width / 2
+            const centerY = rect.top + rect.height / 2
+
+            const angle = Math.atan2(
+                event.clientY - centerY,
+                event.clientX - centerX
+            )
+
+            const distance = 2
+
+            const x = Math.cos(angle) * distance
+            const y = Math.sin(angle) * distance
+
+            pupil.style.transform =
+                `translate(${x}px, ${y}px)`
+        })
+
+    })
+
+    document.documentElement.addEventListener('mouseleave', () => {
+        eyes.forEach((eye) => {
+            const pupil = eye.querySelector('.mascot-pupil')
+
+            pupil.style.transform = 'translate(0, 0)'
+        })
+    })
+}

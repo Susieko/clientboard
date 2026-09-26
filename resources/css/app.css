@@ -1370,3 +1370,774 @@ overwriting the SVG position.
     transform: translateY(-1px);
     filter: brightness(1.06);
 }
+
+/* =========================================================
+   BRAND MASCOT
+   ========================================================= */
+
+.brand-mark--mascot {
+    position: relative;
+
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: radial-gradient(
+        circle at 30% 30%,
+        #e3bb44,
+        #c79a22 70%
+    );
+
+    box-shadow:
+        inset 0 -3px 0 rgba(0, 0, 0, 0.08),
+        0 6px 18px rgba(0, 0, 0, 0.18);
+
+    animation: mascot-float 3.2s ease-in-out infinite;
+    transition: transform 180ms ease;
+}
+
+.brand:hover .brand-mark--mascot {
+    transform: rotate(-4deg) scale(1.04);
+}
+
+.mascot-face {
+    position: relative;
+
+    width: 24px;
+    height: 18px;
+}
+
+.mascot-eye {
+    position: absolute;
+    top: 2px;
+
+    width: 8px;
+    height: 8px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: #fff8dd;
+    overflow: hidden;
+
+    animation: mascot-blink 5.5s infinite;
+}
+
+.mascot-eye:first-child {
+    left: 1px;
+}
+
+.mascot-eye:last-child {
+    right: 1px;
+}
+
+.mascot-pupil {
+    width: 4px;
+    height: 4px;
+
+    border-radius: 50%;
+    background: #171329;
+
+    transform: translate(0, 0);
+    transition: transform 70ms linear;
+}
+
+.mascot-mouth {
+    position: absolute;
+    left: 50%;
+    bottom: 1px;
+
+    width: 12px;
+    height: 6px;
+
+    border-bottom: 2px solid #171329;
+    border-radius: 0 0 12px 12px;
+
+    transform: translateX(-50%);
+    opacity: 0.95;
+}
+
+/* optional little cheek dots */
+.mascot-face::before,
+.mascot-face::after {
+    content: '';
+
+    position: absolute;
+    bottom: 5px;
+
+    width: 3px;
+    height: 3px;
+
+    border-radius: 50%;
+    background: rgba(255, 140, 140, 0.35);
+}
+
+.mascot-face::before {
+    left: -1px;
+}
+
+.mascot-face::after {
+    right: -1px;
+}
+
+@keyframes mascot-float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+@keyframes mascot-blink {
+    0%,
+    45%,
+    47%,
+    100% {
+        transform: scaleY(1);
+    }
+
+    46% {
+        transform: scaleY(0.15);
+    }
+}
+
+.mascot-sparkle {
+    position: absolute;
+    top: -2px;
+    right: -1px;
+
+    width: 8px;
+    height: 8px;
+
+    opacity: 0;
+    transform: scale(0.7) rotate(0deg);
+    transition:
+        opacity 180ms ease,
+        transform 180ms ease;
+}
+
+.mascot-sparkle::before,
+.mascot-sparkle::after {
+    content: '';
+    position: absolute;
+    background: #fff5b8;
+    border-radius: 999px;
+}
+
+.mascot-sparkle::before {
+    left: 3px;
+    top: 0;
+    width: 2px;
+    height: 8px;
+}
+
+.mascot-sparkle::after {
+    left: 0;
+    top: 3px;
+    width: 8px;
+    height: 2px;
+}
+
+.brand:hover .mascot-sparkle {
+    opacity: 1;
+    transform: scale(1) rotate(18deg);
+}
+
+/* =========================================================
+   CLIENTBOARD MASCOT
+   ========================================================= */
+
+.brand-mascot {
+    position: relative;
+
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 32% 25%,
+            #f0ca52 0%,
+            #d4a526 55%,
+            #bd8d18 100%
+        );
+
+    box-shadow:
+        inset 0 2px 3px rgba(255, 255, 255, 0.2),
+        inset 0 -3px 5px rgba(70, 45, 0, 0.12),
+        0 5px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mascot-eyes {
+    width: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 5px;
+}
+
+.mascot-eye {
+    position: relative;
+
+    width: 9px;
+    height: 12px;
+
+    display: grid;
+    place-items: center;
+}
+
+.mascot-pupil {
+    position: relative;
+
+    width: 8px;
+    height: 10px;
+
+    display: block;
+
+    border-radius: 50%;
+
+    background: #171329;
+
+    transition: transform 80ms linear;
+}
+
+.mascot-highlight {
+    position: absolute;
+
+    top: 2px;
+    left: 2px;
+
+    width: 2.5px;
+    height: 2.5px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.95);
+
+    pointer-events: none;
+}
+
+/* =========================================================
+   MASCOT HAPPY HOVER
+   ========================================================= */
+
+.mascot-happy-eye {
+    position: absolute;
+    top: -4px;
+    left: 50%;
+
+    color: #171329;
+
+    font-size: 15px;
+    font-weight: 900;
+    line-height: 1;
+
+    opacity: 0;
+
+    transform:
+        translateX(-50%)
+        translateY(3px)
+        scale(0.6);
+
+    transition:
+        opacity 140ms ease,
+        transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* BLUSHIES */
+
+.mascot-blush {
+    position: absolute;
+    top: 25px;
+
+    width: 11px;
+    height: 7px;
+
+    opacity: 0;
+
+    background:
+        repeating-linear-gradient(
+            115deg,
+            transparent 0 2px,
+            #e77575 2px 4px,
+            transparent 4px 6px
+        );
+
+    transform: scale(0.5);
+
+    transition:
+        opacity 160ms ease,
+        transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mascot-blush--left {
+    left: 2px;
+}
+
+.mascot-blush--right {
+    right: 2px;
+
+    transform: scale(0.5) scaleX(-1);
+}
+
+
+/* LITTLE HEART */
+
+.mascot-heart {
+    position: absolute;
+
+    top: -9px;
+    right: -7px;
+
+    color: #f38b9b;
+
+    font-size: 13px;
+
+    opacity: 0;
+
+    transform:
+        translateY(5px)
+        rotate(-12deg)
+        scale(0);
+
+    transition:
+        opacity 160ms ease,
+        transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+
+/* =========================================================
+   HOVER STATE
+   ========================================================= */
+
+.brand-mascot:hover .mascot-pupil {
+    opacity: 0;
+    transform: scale(0.4) !important;
+}
+
+.brand-mascot:hover .mascot-eye {
+    background: transparent;
+}
+
+.brand-mascot:hover .mascot-happy-eye {
+    opacity: 1;
+
+    transform:
+        translateX(-50%)
+        translateY(0)
+        scale(1);
+}
+
+.brand-mascot:hover .mascot-blush {
+    opacity: 1;
+
+    transform: scale(1);
+}
+
+.brand-mascot:hover .mascot-blush--right {
+    transform: scale(1) scaleX(-1);
+}
+
+.brand-mascot:hover .mascot-heart {
+    opacity: 1;
+
+    transform:
+        translateY(0)
+        rotate(8deg)
+        scale(1);
+}
+
+.brand-mascot {
+    transition:
+        transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+        border-radius 240ms ease;
+}
+
+.brand-mascot:hover {
+    transform: translateY(-2px) scale(1.08, 0.96);
+}
+
+.brand-mascot:hover .mascot-highlight {
+    opacity: 0;
+}
+
+/* =========================================================
+   CLIENTBOARD CAT MASCOT
+   ========================================================= */
+
+.brand-mascot {
+    position: relative;
+
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    flex-shrink: 0;
+
+    /* Body itself is drawn with ::before */
+    background: transparent;
+
+    overflow: visible;
+    isolation: isolate;
+
+    transition:
+        transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* =========================================================
+   YELLOW BODY
+   ========================================================= */
+
+.brand-mascot::before {
+    content: '';
+
+    position: absolute;
+    inset: 0;
+
+    z-index: 2;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 32% 25%,
+            #f0ca52 0%,
+            #d4a526 55%,
+            #bd8d18 100%
+        );
+
+    box-shadow:
+        inset 0 2px 3px rgba(255, 255, 255, 0.2),
+        inset 0 -3px 5px rgba(70, 45, 0, 0.12),
+        0 5px 12px rgba(0, 0, 0, 0.15);
+}
+
+
+/* =========================================================
+   FLOPPY EARS
+   ========================================================= */
+
+.mascot-ear {
+    position: absolute;
+    top: -2px;
+
+    width: 16px;
+    height: 16px;
+
+    /* IMPORTANT:
+       lower z-index than body = ears stay behind head */
+    z-index: 1;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            145deg,
+            #e8bd43 0%,
+            #d4a526 60%,
+            #bd8d18 100%
+        );
+
+    border-radius: 4px 11px 4px 10px;
+}
+
+
+/* subtle inner ear */
+
+.mascot-ear::after {
+    content: '';
+
+    position: absolute;
+    inset: 4px;
+
+    background: rgba(119, 74, 7, 0.12);
+
+    border-radius: 3px 8px 3px 7px;
+}
+
+
+.mascot-ear--left {
+    left: 0;
+
+    transform: rotate(-30deg);
+}
+
+
+.mascot-ear--right {
+    right: 0;
+
+    transform:
+        rotate(30deg)
+        scaleX(-1);
+}
+
+
+/*
+NO hover rules for the ears.
+
+They remain floppy and behind the head
+both normally and during the happy animation.
+*/
+
+
+/* =========================================================
+   EYES
+   ========================================================= */
+
+.mascot-eyes {
+    position: relative;
+
+    z-index: 3;
+
+    width: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 5px;
+}
+
+
+.mascot-eye {
+    position: relative;
+
+    width: 9px;
+    height: 12px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: #fff8dd;
+
+    overflow: hidden;
+
+    transition:
+        background 140ms ease,
+        transform 140ms ease;
+}
+
+.mascot-pupil {
+    position: relative;
+
+    width: 8px;
+    height: 10px;
+
+    display: block;
+
+    border-radius: 50%;
+
+    background: #171329;
+
+    transition:
+        transform 80ms linear,
+        opacity 130ms ease;
+}
+
+
+.mascot-highlight {
+    position: absolute;
+
+    top: 2px;
+    left: 2px;
+
+    width: 2.5px;
+    height: 2.5px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.95);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   HAPPY ^ ^ EYES
+   ========================================================= */
+
+.mascot-happy-eye {
+    position: absolute;
+
+    top: -4px;
+    left: 50%;
+
+    z-index: 4;
+
+    color: #171329;
+
+    font-size: 15px;
+    font-weight: 900;
+    line-height: 1;
+
+    opacity: 0;
+
+    transform:
+        translateX(-50%)
+        translateY(3px)
+        scale(0.6);
+
+    transition:
+        opacity 140ms ease,
+        transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* =========================================================
+   BLUSHIES
+   ========================================================= */
+
+.mascot-blush {
+    position: absolute;
+    top: 25px;
+
+    z-index: 4;
+
+    width: 11px;
+    height: 7px;
+
+    opacity: 0;
+
+    background:
+        repeating-linear-gradient(
+            115deg,
+            transparent 0 2px,
+            #e77575 2px 4px,
+            transparent 4px 6px
+        );
+
+    transform: scale(0.5);
+
+    transition:
+        opacity 160ms ease,
+        transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+.mascot-blush--left {
+    left: 2px;
+}
+
+
+.mascot-blush--right {
+    right: 2px;
+
+    transform:
+        scale(0.5)
+        scaleX(-1);
+}
+
+
+/* =========================================================
+   HEART
+   ========================================================= */
+
+.mascot-heart {
+    position: absolute;
+
+    top: -10px;
+    right: -7px;
+
+    z-index: 5;
+
+    color: #f38b9b;
+
+    font-size: 13px;
+
+    opacity: 0;
+
+    transform:
+        translateY(5px)
+        rotate(-12deg)
+        scale(0);
+
+    transition:
+        opacity 160ms ease,
+        transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+
+/* =========================================================
+   HAPPY HOVER
+   ========================================================= */
+
+.brand-mascot:hover {
+    transform:
+        translateY(-2px)
+        scale(1.06, 0.97);
+}
+
+
+/* Hide normal eyes */
+
+.brand-mascot:hover .mascot-pupil {
+    opacity: 0;
+
+    transform: scale(0.4) !important;
+}
+
+.brand-mascot:hover .mascot-highlight {
+    opacity: 0;
+}
+
+
+/* Show ^ ^ */
+
+.brand-mascot:hover .mascot-happy-eye {
+    opacity: 1;
+
+    transform:
+        translateX(-50%)
+        translateY(0)
+        scale(1);
+}
+
+
+/* Show blushies */
+
+.brand-mascot:hover .mascot-blush {
+    opacity: 1;
+
+    transform: scale(1);
+}
+
+.brand-mascot:hover .mascot-blush--right {
+    transform:
+        scale(1)
+        scaleX(-1);
+}
+
+
+/* Pop heart */
+
+.brand-mascot:hover .mascot-heart {
+    opacity: 1;
+
+    transform:
+        translateY(0)
+        rotate(8deg)
+        scale(1);
+}

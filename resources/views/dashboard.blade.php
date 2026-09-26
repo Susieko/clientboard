@@ -12,10 +12,45 @@
     <main class="app-shell">
 
         <header class="topbar">
-            <a href="/" class="brand">
-                <span class="brand-mark">◡</span>
-                <span>Clientboard</span>
-            </a>
+<a href="/" class="brand">
+
+<span
+    class="brand-mark brand-mascot"
+    data-brand-mascot
+    aria-hidden="true"
+>
+    <span class="mascot-eyes">
+
+        <span class="mascot-eye">
+            <span class="mascot-pupil">
+                <span class="mascot-highlight"></span>
+            </span>
+
+            <span class="mascot-happy-eye">^</span>
+        </span>
+
+        <span class="mascot-eye">
+            <span class="mascot-pupil">
+                <span class="mascot-highlight"></span>
+            </span>
+
+            <span class="mascot-happy-eye">^</span>
+        </span>
+
+    </span>
+
+    <span class="mascot-ear mascot-ear--left"></span>
+<span class="mascot-ear mascot-ear--right"></span>
+
+    <span class="mascot-blush mascot-blush--left"></span>
+    <span class="mascot-blush mascot-blush--right"></span>
+
+    <span class="mascot-heart">♥</span>
+</span>
+
+    <span>Clientboard</span>
+
+</a>
 
             <button class="new-project-button">
                 <span>+</span>

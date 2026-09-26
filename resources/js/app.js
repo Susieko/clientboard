@@ -15,6 +15,26 @@ const drawerClientSelect = document.querySelector(
 
 const statusButtons = document.querySelectorAll('[data-status-button]')
 
+const drawerLandscape =
+    document.querySelector(
+        '[data-drawer-landscape]'
+    )
+
+const drawerGenericVisual =
+    document.querySelector(
+        '[data-drawer-generic-visual]'
+    )
+
+const drawerVisualInitials =
+    document.querySelector(
+        '[data-drawer-visual-initials]'
+    )
+
+const drawerVisualName =
+    document.querySelector(
+        '[data-drawer-visual-name]'
+    )
+
 const drawerClientCard = document.querySelector(
     '[data-drawer-client-card]'
 )
@@ -124,11 +144,13 @@ function updateProgressUI(value) {
 
 
 function updateColumnCounts() {
+
     document
         .querySelectorAll(
             '[data-status-column]'
         )
         .forEach((column) => {
+
             const count =
                 column.querySelectorAll(
                     '.project-card'
@@ -139,10 +161,23 @@ function updateColumnCounts() {
                     '.workflow-column__count'
                 )
 
+            const emptyState =
+                column.querySelector(
+                    '.workflow-column__empty'
+                )
+
+
             if (countElement) {
                 countElement.textContent =
                     count
             }
+
+
+            if (emptyState) {
+                emptyState.hidden =
+                    count > 0
+            }
+
         })
 }
 
@@ -153,6 +188,20 @@ function updateColumnCounts() {
 
 function openDrawer(card) {
     activeProjectCard = card
+
+    projectCards.forEach(
+    (projectCard) => {
+        projectCard.classList.remove(
+            'is-selected'
+        )
+    }
+)
+
+card.classList.add(
+    'is-selected'
+)
+    const clientSlug =
+        card.dataset.projectClientSlug
 
     const title =
         card.dataset.projectTitle
@@ -274,6 +323,39 @@ function openDrawer(card) {
         )
     }
 
+    /* Drawer visual */
+
+const isNoordgroeiT =
+    clientSlug === 'noordgroeit'
+
+
+if (drawerLandscape) {
+    drawerLandscape.hidden =
+        !isNoordgroeiT
+}
+
+
+if (drawerGenericVisual) {
+    drawerGenericVisual.hidden =
+        isNoordgroeiT
+
+    drawerGenericVisual.style.setProperty(
+        '--client-accent',
+        clientColor
+    )
+}
+
+
+if (drawerVisualInitials) {
+    drawerVisualInitials.textContent =
+        getClientInitials(client)
+}
+
+
+if (drawerVisualName) {
+    drawerVisualName.textContent =
+        client
+}
 
     /* Status */
 
@@ -356,7 +438,9 @@ function closeDrawer() {
         'aria-hidden',
         'true'
     )
-
+    activeProjectCard?.classList.remove(
+    'is-selected'
+)
     activeProjectCard = null
 }
 
@@ -556,12 +640,16 @@ statusButtons.forEach((button) => {
                 const data =
                     await response.json()
 
-                const savedStatus =
-                    data.status
+const savedStatus =
+    data.status
 
-                activeProjectCard
-                    .dataset.projectStatus =
-                    savedStatus
+activeProjectCard
+    .dataset.projectStatus =
+    savedStatus
+
+activeProjectCard
+    .dataset.cardStatus =
+    savedStatus
 
                 statusButtons.forEach(
                     (statusButton) => {

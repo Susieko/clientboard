@@ -58,7 +58,14 @@ Route::get('/', function () {
     |--------------------------------------------------------------------------
     */
 
-    $projects = Project::with(['client', 'notes'])->get();
+    $projects = Project::with(['client', 'notes'])
+    ->whereNull('archived_at')
+    ->get();
+
+    $archivedProjects = Project::with(['client', 'notes'])
+    ->whereNotNull('archived_at')
+    ->orderByDesc('archived_at')
+    ->get();
 
     $visibleProjects = $selectedClient
         ? $projects
@@ -231,7 +238,9 @@ $clientCount = $selectedClient
         'nextDeadline' => $nextDeadline,
 
         'selectedClientStats' => $selectedClientStats,
-'selectedClientInitials' => $selectedClientInitials,
+        'selectedClientInitials' => $selectedClientInitials,
+
+        'archivedProjects' => $archivedProjects,
     ]);
 });
 
@@ -269,3 +278,23 @@ Route::patch(
     '/projects/{project}/client',
     [ProjectController::class, 'updateClient']
 )->name('projects.client.update');
+
+Route::patch(
+    '/projects/{project}/title',
+    [ProjectController::class, 'updateTitle']
+)->name('projects.title.update');
+
+Route::patch(
+    '/projects/{project}/archive',
+    [ProjectController::class, 'archive']
+)->name('projects.archive');
+
+Route::patch(
+    '/projects/{project}/restore',
+    [ProjectController::class, 'restore']
+)->name('projects.restore');
+
+Route::delete(
+    '/projects/{project}',
+    [ProjectController::class, 'destroy']
+)->name('projects.destroy');

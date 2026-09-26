@@ -18,9 +18,9 @@ const closeButton =
         '[data-drawer-close]'
     )
 
-const drawerTitle =
+const drawerTitleInput =
     document.querySelector(
-        '[data-drawer-title]'
+        '[data-drawer-title-input]'
     )
 
 const drawerClient =
@@ -98,6 +98,26 @@ const drawerClientContactRow =
         '[data-drawer-client-contact-row]'
     )
 
+const archiveProjectButton =
+    document.querySelector(
+        '[data-archive-project]'
+    )
+
+const archiveConfirm =
+    document.querySelector(
+        '[data-archive-confirm]'
+    )
+
+const archiveCancelButton =
+    document.querySelector(
+        '[data-archive-cancel]'
+    )
+
+const archiveConfirmButton =
+    document.querySelector(
+        '[data-archive-confirm-button]'
+    )
+
 const progressSlider =
     document.querySelector(
         '[data-drawer-progress-slider]'
@@ -128,9 +148,184 @@ const csrfToken =
         'meta[name="csrf-token"]'
     )?.content
 
+const openArchiveButton =
+    document.querySelector(
+        '[data-open-archive]'
+    )
+
+const archiveModal =
+    document.querySelector(
+        '[data-archive-modal]'
+    )
+
+const archiveModalBackdrop =
+    document.querySelector(
+        '[data-archive-modal-backdrop]'
+    )
+
+const closeArchiveButton =
+    document.querySelector(
+        '[data-close-archive]'
+    )
+
 
 let activeProjectCard = null
 let drawerSaveTimer = null
+
+/* =========================================================
+   PROJECT TITLE
+   ========================================================= */
+
+drawerTitleInput
+    ?.addEventListener(
+        'change',
+        async (event) => {
+
+            if (!activeProjectCard) {
+                return
+            }
+
+            const projectId =
+                activeProjectCard
+                    .dataset
+                    .projectId
+
+            const previousTitle =
+                activeProjectCard
+                    .dataset
+                    .projectTitle
+
+            const newTitle =
+                event.target
+                    .value
+                    .trim()
+
+
+            if (!newTitle) {
+
+                drawerTitleInput.value =
+                    previousTitle
+
+                return
+            }
+
+
+            if (
+                newTitle ===
+                previousTitle
+            ) {
+                return
+            }
+
+
+            drawerTitleInput.disabled =
+                true
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/projects/${projectId}/title`,
+                        {
+                            method:
+                                'PATCH',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json',
+
+                                'Accept':
+                                    'application/json',
+
+                                'X-CSRF-TOKEN':
+                                    csrfToken,
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    title:
+                                        newTitle,
+                                }),
+                        }
+                    )
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        'Could not save project title.'
+                    )
+                }
+
+
+                const data =
+                    await response
+                        .json()
+
+
+                activeProjectCard
+                    .dataset
+                    .projectTitle =
+                    data.title
+
+
+                const cardTitle =
+                    activeProjectCard
+                        .querySelector(
+                            'h4'
+                        )
+
+
+                if (cardTitle) {
+
+                    cardTitle.textContent =
+                        data.title
+                }
+
+
+                drawerTitleInput.value =
+                    data.title
+
+
+                showSavedState()
+
+            } catch (error) {
+
+                console.error(
+                    error
+                )
+
+
+                drawerTitleInput.value =
+                    previousTitle
+
+
+                alert(
+                    'Project title could not be saved.'
+                )
+
+            } finally {
+
+                drawerTitleInput.disabled =
+                    false
+            }
+        }
+    )
+
+    drawerTitleInput
+    ?.addEventListener(
+        'keydown',
+        (event) => {
+
+            if (event.key === 'Enter') {
+
+                event.preventDefault()
+
+                drawerTitleInput.blur()
+            }
+        }
+    )
 
 
 /* =========================================================
@@ -456,11 +651,18 @@ function openDrawer(card) {
 
     /* Project info */
 
-    if (drawerTitle) {
+    if (archiveConfirm) {
+    archiveConfirm.hidden = true
+}
 
-        drawerTitle.textContent =
-            title
-    }
+if (archiveProjectButton) {
+    archiveProjectButton.hidden = false
+}
+
+if (drawerTitleInput) {
+    drawerTitleInput.value =
+        title
+}
 
 
     if (drawerClient) {
@@ -729,6 +931,68 @@ function closeDrawer() {
     activeProjectCard =
         null
 }
+
+function openArchiveModal() {
+
+    archiveModal
+        ?.classList
+        .add(
+            'is-open'
+        )
+
+    archiveModalBackdrop
+        ?.classList
+        .add(
+            'is-open'
+        )
+
+    archiveModal
+        ?.setAttribute(
+            'aria-hidden',
+            'false'
+        )
+}
+
+
+function closeArchiveModal() {
+
+    archiveModal
+        ?.classList
+        .remove(
+            'is-open'
+        )
+
+    archiveModalBackdrop
+        ?.classList
+        .remove(
+            'is-open'
+        )
+
+    archiveModal
+        ?.setAttribute(
+            'aria-hidden',
+            'true'
+        )
+}
+
+
+openArchiveButton
+    ?.addEventListener(
+        'click',
+        openArchiveModal
+    )
+
+closeArchiveButton
+    ?.addEventListener(
+        'click',
+        closeArchiveModal
+    )
+
+archiveModalBackdrop
+    ?.addEventListener(
+        'click',
+        closeArchiveModal
+    )
 
 
 /* =========================================================
@@ -2371,6 +2635,8 @@ document.addEventListener(
             closeNewProjectModal()
 
             closeClientModal()
+
+            closeArchiveModal()
         }
     }
 )
@@ -2490,3 +2756,320 @@ if (mascot) {
             }
         )
 }
+
+document
+    .querySelectorAll(
+        '[data-restore-project]'
+    )
+    .forEach((button) => {
+
+        button.addEventListener(
+            'click',
+            async () => {
+
+                const projectId =
+                    button.dataset
+                        .restoreProject
+
+                button.disabled =
+                    true
+
+                button.textContent =
+                    'Restoring...'
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/projects/${projectId}/restore`,
+                            {
+                                method:
+                                    'PATCH',
+
+                                headers: {
+                                    'Accept':
+                                        'application/json',
+
+                                    'X-CSRF-TOKEN':
+                                        csrfToken,
+                                },
+                            }
+                        )
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            'Could not restore project.'
+                        )
+                    }
+
+                    button.textContent =
+                        'Restored ✓'
+
+                    setTimeout(
+                        () => {
+                            window.location
+                                .reload()
+                        },
+                        400
+                    )
+
+                } catch (error) {
+
+                    console.error(
+                        error
+                    )
+
+                    button.disabled =
+                        false
+
+                    button.textContent =
+                        'Restore'
+
+                    alert(
+                        'Project could not be restored.'
+                    )
+                }
+            }
+        )
+    })
+
+
+document
+    .querySelectorAll(
+        '[data-delete-project]'
+    )
+    .forEach((button) => {
+
+        let confirming =
+            false
+
+
+        button.addEventListener(
+            'click',
+            async () => {
+
+                if (!confirming) {
+
+                    confirming =
+                        true
+
+                    button.classList.add(
+                        'is-confirming'
+                    )
+
+                    button.textContent =
+                        'Delete forever?'
+
+                    setTimeout(
+                        () => {
+
+                            confirming =
+                                false
+
+                            button
+                                .classList
+                                .remove(
+                                    'is-confirming'
+                                )
+
+                            button.textContent =
+                                'Delete'
+
+                        },
+                        3500
+                    )
+
+                    return
+                }
+
+
+                const projectId =
+                    button.dataset
+                        .deleteProject
+
+                button.disabled =
+                    true
+
+                button.textContent =
+                    'Deleting...'
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/projects/${projectId}`,
+                            {
+                                method:
+                                    'DELETE',
+
+                                headers: {
+                                    'Accept':
+                                        'application/json',
+
+                                    'X-CSRF-TOKEN':
+                                        csrfToken,
+                                },
+                            }
+                        )
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            'Could not delete project.'
+                        )
+                    }
+
+
+                    window.location
+                        .reload()
+
+                } catch (error) {
+
+                    console.error(
+                        error
+                    )
+
+                    button.disabled =
+                        false
+
+                    confirming =
+                        false
+
+                    button.classList
+                        .remove(
+                            'is-confirming'
+                        )
+
+                    button.textContent =
+                        'Delete'
+
+                    alert(
+                        'Project could not be deleted.'
+                    )
+                }
+            }
+        )
+    })
+
+/* =========================================================
+   ARCHIVE PROJECT
+   ========================================================= */
+
+archiveProjectButton
+    ?.addEventListener(
+        'click',
+        () => {
+
+            if (archiveConfirm) {
+                archiveConfirm.hidden =
+                    false
+            }
+
+            archiveProjectButton.hidden =
+                true
+        }
+    )
+
+
+archiveCancelButton
+    ?.addEventListener(
+        'click',
+        () => {
+
+            if (archiveConfirm) {
+                archiveConfirm.hidden =
+                    true
+            }
+
+            if (archiveProjectButton) {
+                archiveProjectButton.hidden =
+                    false
+            }
+        }
+    )
+
+
+archiveConfirmButton
+    ?.addEventListener(
+        'click',
+        async () => {
+
+            if (!activeProjectCard) {
+                return
+            }
+
+
+            const projectId =
+                activeProjectCard
+                    .dataset
+                    .projectId
+
+
+            archiveConfirmButton.disabled =
+                true
+
+            archiveConfirmButton.textContent =
+                'Archiving...'
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/projects/${projectId}/archive`,
+                        {
+                            method:
+                                'PATCH',
+
+                            headers: {
+                                'Accept':
+                                    'application/json',
+
+                                'X-CSRF-TOKEN':
+                                    csrfToken,
+                            },
+                        }
+                    )
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        'Could not archive project.'
+                    )
+                }
+
+
+                archiveConfirmButton.textContent =
+                    'Archived ✓'
+
+
+                setTimeout(() => {
+
+                    window.location.reload()
+
+                }, 450)
+
+            } catch (error) {
+
+                console.error(
+                    error
+                )
+
+
+                alert(
+                    'Project could not be archived.'
+                )
+
+
+                archiveConfirmButton.disabled =
+                    false
+
+                archiveConfirmButton.textContent =
+                    'Yes, archive'
+            }
+        }
+    )

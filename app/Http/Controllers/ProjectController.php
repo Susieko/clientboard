@@ -142,3 +142,23 @@ public function updateDeadline(Request $request, Project $project)
     ]);
 }
 }
+
+public function updateTitle(Request $request, Project $project)
+{
+    $validated = $request->validate([
+        'title' => [
+            'required',
+            'string',
+            'max:255',
+        ],
+    ]);
+
+    $project->update([
+        'title' => $validated['title'],
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'title' => $project->title,
+    ]);
+}

@@ -329,9 +329,10 @@
                 <h2>Projects</h2>
             </div>
 
-            <span class="workflow-count">
-                {{ count($projects) }} projects
-            </span>
+<span class="workflow-count">
+    {{ count($projects) }}
+    {{ count($projects) === 1 ? 'project' : 'projects' }}
+</span>
         </div>
 
 
@@ -391,57 +392,107 @@
         role="button"
     >
 
-                                    <div class="project-card__top">
+<div class="project-card__topline">
 
-                                        <span class="project-card__client">
-                                            {{ $project->client?->name ?? 'No client' }}
-                                        </span>
+    <span class="project-card__client">
 
-                                        <button
-                                            class="project-card__menu"
-                                            type="button"
-                                            aria-label="Project options"
-                                        >
-                                            ···
-                                        </button>
+        <span
+            class="project-card__client-dot"
+            style="
+                background:
+                {{ $project->client?->accent_color ?? '#d4a526' }}
+            "
+        ></span>
 
-                                    </div>
+        {{ $project->client?->name ?? 'No client' }}
 
-
-                                    <h4>
-                                        {{ $project['title'] }}
-                                    </h4>
+    </span>
 
 
-                                    <div class="project-card__progress">
+    <span class="project-card__status">
 
-                                        <div class="project-card__progress-info">
-                                            <span>Progress</span>
+        @switch($project->status)
 
-                                            <strong>
-                                                {{ $project['progress'] }}%
-                                            </strong>
-                                        </div>
+            @case('design')
+                Design
+                @break
 
-                                        <div class="progress-track">
-                                            <span
-                                                style="width: {{ $project['progress'] }}%"
-                                            ></span>
-                                        </div>
+            @case('development')
+                Development
+                @break
 
-                                    </div>  
+            @case('feedback')
+                Feedback
+                @break
 
-                                    <div class="project-card__footer">
+            @case('done')
+                Done
+                @break
 
-                                        <span>
-                                            Deadline
-                                        </span>
+        @endswitch
 
-                                        <strong data-card-deadline>
-        {{ $project['deadline'] }}
-    </strong>
+    </span>
 
-                                    </div>
+</div>
+
+
+<h4>
+    {{ $project->title }}
+</h4>
+
+
+<div class="project-card__progress">
+
+    <div class="project-card__progress-info">
+
+        <span>
+            Progress
+        </span>
+
+        <strong>
+            {{ $project->progress }}%
+        </strong>
+
+    </div>
+
+
+    <div class="progress-track">
+
+        <span
+            style="
+                width:
+                {{ $project->progress }}%
+            "
+        ></span>
+
+    </div>
+
+</div>
+
+
+<div class="project-card__footer">
+
+    <span
+        class="project-card__deadline"
+        data-card-deadline
+    >
+        {{ $project->deadline ?? 'No deadline' }}
+    </span>
+
+
+    <span class="project-card__notes">
+
+        <span aria-hidden="true">
+            ✦
+        </span>
+
+        <span data-card-note-count>
+            {{ $project->notes->count() }}
+        </span>
+
+    </span>
+
+</div>
 
                                 </article>
 
@@ -828,51 +879,48 @@
         data-drawer-backdrop
     ></div>
 
-    <aside
-        class="project-drawer"
-        data-project-drawer
-        aria-hidden="true"
-    >
-
-<div
-    class="project-drawer__visual"
-    data-drawer-visual
+<aside
+    class="project-drawer"
+    data-project-drawer
+    aria-hidden="true"
 >
-    <div
-        class="drawer-landscape"
-        data-drawer-landscape
-    >
-        @include('partials.noordgroeit-landscape')
+
+    <div class="project-drawer__visual">
+
+        @foreach ($clients as $client)
+
+            <div
+                class="drawer-client-scene"
+                data-drawer-client-scene="{{ $client->slug }}"
+                hidden
+            >
+                @include('partials.client-visual', [
+                    'clientSlug' => $client->slug,
+                ])
+            </div>
+
+        @endforeach
+
     </div>
 
-    <div
-        class="drawer-client-visual"
-        data-drawer-generic-visual
-        hidden
-    >
-        <div class="drawer-client-visual__orb drawer-client-visual__orb--one"></div>
-        <div class="drawer-client-visual__orb drawer-client-visual__orb--two"></div>
 
-        <span
-            class="drawer-client-visual__initials"
-            data-drawer-visual-initials
-        >
-            CL
-        </span>
+    <div class="project-drawer__content">
 
-        <span
-            class="drawer-client-visual__name"
-            data-drawer-visual-name
-        >
-            Client
-        </span>
-    </div>
-</div>
+        <div class="project-drawer__top">
 
-        <div class="project-drawer__content">
+            <span>
+                Project details
+            </span>
 
-            <div class="project-drawer__top">
-                <span>Project details</span>
+            <div class="project-drawer__top-actions">
+
+                <span
+                    class="drawer-save-state"
+                    data-drawer-save-state
+                    aria-live="polite"
+                >
+                    Saved ✓
+                </span>
 
                 <button
                     class="project-drawer__close"
@@ -882,218 +930,244 @@
                 >
                     ×
                 </button>
+
             </div>
 
-    <h2 data-drawer-title>
-        Project details
-    </h2>
+        </div>
 
-    <div class="drawer-project-client" data-drawer-client>
-        Client
-    </div>
 
-    <div class="drawer-detail">
+        <h2 data-drawer-title>
+            Project details
+        </h2>
 
-        <label
-            class="drawer-detail__label"
-            for="drawer-project-client"
+
+        <div
+            class="drawer-project-client"
+            data-drawer-client
         >
             Client
-        </label>
+        </div>
 
-        <select
-            id="drawer-project-client"
-            class="drawer-client-select"
-            data-drawer-client-select
-        >
 
-            @foreach ($clients as $client)
+        <div class="drawer-detail">
 
-                <option value="{{ $client->id }}">
-                    {{ $client->name }}
-                </option>
-
-            @endforeach
-
-        </select>
-
-    </div>
-
-    <div class="drawer-detail">
-
-        <span class="drawer-detail__label">
-            Status
-        </span>
-
-        <div class="drawer-status-grid">
-
-            <button
-                type="button"
-                class="drawer-status-button"
-                data-status-button="design"
+            <label
+                class="drawer-detail__label"
+                for="drawer-project-client"
             >
-                Design
-            </button>
+                Client
+            </label>
 
-            <button
-                type="button"
-                class="drawer-status-button"
-                data-status-button="development"
+            <select
+                id="drawer-project-client"
+                class="drawer-client-select"
+                data-drawer-client-select
             >
-                Development
-            </button>
 
-            <button
-                type="button"
-                class="drawer-status-button"
-                data-status-button="feedback"
-            >
-                Waiting for feedback
-            </button>
+                @foreach ($clients as $client)
 
-            <button
-                type="button"
-                class="drawer-status-button"
-                data-status-button="done"
-            >
-                Done
-            </button>
+                    <option value="{{ $client->id }}">
+                        {{ $client->name }}
+                    </option>
+
+                @endforeach
+
+            </select>
 
         </div>
 
-    </div>
 
-    <div class="drawer-detail">
+        <div class="drawer-detail">
 
-        <label
-            class="drawer-detail__label"
-            for="project-deadline"
-        >
-            Deadline
-        </label>
+            <span class="drawer-detail__label">
+                Status
+            </span>
 
-        <input
-            type="date"
-            id="project-deadline"
-            class="drawer-deadline-input"
-            data-drawer-deadline
-        >
+            <div class="drawer-status-grid">
 
-    </div>
+                <button
+                    type="button"
+                    class="drawer-status-button"
+                    data-status-button="design"
+                >
+                    Design
+                </button>
 
-    <div class="drawer-detail">
+                <button
+                    type="button"
+                    class="drawer-status-button"
+                    data-status-button="development"
+                >
+                    Development
+                </button>
 
-        <div class="drawer-progress__header">
-            <span>Progress</span>
+                <button
+                    type="button"
+                    class="drawer-status-button"
+                    data-status-button="feedback"
+                >
+                    Waiting for feedback
+                </button>
 
-            <strong data-drawer-progress-label>
-                0%
-            </strong>
+                <button
+                    type="button"
+                    class="drawer-status-button"
+                    data-status-button="done"
+                >
+                    Done
+                </button>
+
+            </div>
+
         </div>
 
-        <input
-            class="drawer-progress-slider"
-            data-drawer-progress-slider
-            type="range"
-            min="0"
-            max="100"
-            value="0"
-            aria-label="Project progress"
-        >
 
-    </div>
+        <div class="drawer-detail">
 
-    <div class="drawer-detail">
+            <label
+                class="drawer-detail__label"
+                for="project-deadline"
+            >
+                Deadline
+            </label>
 
-        <span class="drawer-detail__label">
-            Notes
-        </span>
+            <input
+                type="date"
+                id="project-deadline"
+                class="drawer-deadline-input"
+                data-drawer-deadline
+            >
 
-        <div
-            class="drawer-notes"
-            data-drawer-notes
-        ></div>
+        </div>
 
-        <div class="drawer-note-form">
 
-        <input
-            type="text"
-            class="drawer-note-input"
-            data-note-input
-            placeholder="Add a note"
-            maxlength="500"
-        >
+        <div class="drawer-detail">
 
-        <button
-            type="button"
-            class="drawer-note-add"
-            data-note-add
-        >
-            Add
-        </button>
+            <div class="drawer-progress__header">
 
-    </div>
+                <span>
+                    Progress
+                </span>
 
-    <div class="drawer-detail">
+                <strong data-drawer-progress-label>
+                    0%
+                </strong>
 
-        <span class="drawer-detail__label">
-            Client
-        </span>
+            </div>
 
-        <div
-            class="drawer-client-card"
-            data-drawer-client-card
-        >
+            <input
+                class="drawer-progress-slider"
+                data-drawer-progress-slider
+                type="range"
+                min="0"
+                max="100"
+                value="0"
+                aria-label="Project progress"
+            >
+
+        </div>
+
+
+        <div class="drawer-detail">
+
+            <span class="drawer-detail__label">
+                Notes
+            </span>
+
             <div
-                class="drawer-client-card__avatar"
-                data-drawer-client-avatar
-            >
-                CL
+                class="drawer-notes"
+                data-drawer-notes
+            ></div>
+
+            <div class="drawer-note-form">
+
+                <input
+                    type="text"
+                    class="drawer-note-input"
+                    data-note-input
+                    placeholder="Add a note"
+                    maxlength="500"
+                >
+
+                <button
+                    type="button"
+                    class="drawer-note-add"
+                    data-note-add
+                >
+                    Add
+                </button>
+
             </div>
 
-            <div class="drawer-client-card__content">
+        </div>
 
-                <div class="drawer-client-card__heading">
-                    <strong data-drawer-client-name>
-                        Client
-                    </strong>
 
-                    <span data-drawer-client-type>
-                        —
-                    </span>
-                </div>
+        <div class="drawer-detail">
 
-                <p
-                    class="drawer-client-card__location"
-                    data-drawer-client-location
-                ></p>
+            <span class="drawer-detail__label">
+                Client
+            </span>
 
-                <p
-                    class="drawer-client-card__description"
-                    data-drawer-client-description
-                ></p>
+            <div
+                class="drawer-client-card"
+                data-drawer-client-card
+            >
 
                 <div
-                    class="drawer-client-card__contact"
-                    data-drawer-client-contact-row
+                    class="drawer-client-card__avatar"
+                    data-drawer-client-avatar
                 >
-                    <span data-drawer-client-contact></span>
+                    CL
+                </div>
 
-                    <a
-                        href="#"
-                        data-drawer-client-email
-                    ></a>
+                <div class="drawer-client-card__content">
+
+                    <div class="drawer-client-card__heading">
+
+                        <strong data-drawer-client-name>
+                            Client
+                        </strong>
+
+                        <span data-drawer-client-type>
+                            —
+                        </span>
+
+                    </div>
+
+                    <p
+                        class="drawer-client-card__location"
+                        data-drawer-client-location
+                    ></p>
+
+                    <p
+                        class="drawer-client-card__description"
+                        data-drawer-client-description
+                    ></p>
+
+                    <div
+                        class="drawer-client-card__contact"
+                        data-drawer-client-contact-row
+                    >
+
+                        <span
+                            data-drawer-client-contact
+                        ></span>
+
+                        <a
+                            href="#"
+                            data-drawer-client-email
+                        ></a>
+
+                    </div>
+
                 </div>
 
             </div>
+
         </div>
 
     </div>
 
-    </div>
-
-        </div>
-
-    </aside>
+</aside>
     </body>
     </html>

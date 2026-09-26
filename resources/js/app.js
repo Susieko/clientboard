@@ -1,92 +1,136 @@
-const projectCards = document.querySelectorAll('[data-project-card]')
-
-const drawer = document.querySelector('[data-project-drawer]')
-const backdrop = document.querySelector('[data-drawer-backdrop]')
-const closeButton = document.querySelector('[data-drawer-close]')
-
-const drawerTitle = document.querySelector('[data-drawer-title]')
-const drawerClient = document.querySelector('[data-drawer-client]')
-const drawerDeadline = document.querySelector('[data-drawer-deadline]')
-const drawerNotes = document.querySelector('[data-drawer-notes]')
-
-const drawerClientSelect = document.querySelector(
-    '[data-drawer-client-select]'
-)
-
-const statusButtons = document.querySelectorAll('[data-status-button]')
-
-const drawerLandscape =
-    document.querySelector(
-        '[data-drawer-landscape]'
+const projectCards =
+    document.querySelectorAll(
+        '[data-project-card]'
     )
 
-const drawerGenericVisual =
+const drawer =
     document.querySelector(
-        '[data-drawer-generic-visual]'
+        '[data-project-drawer]'
     )
 
-const drawerVisualInitials =
+const backdrop =
     document.querySelector(
-        '[data-drawer-visual-initials]'
+        '[data-drawer-backdrop]'
     )
 
-const drawerVisualName =
+const closeButton =
     document.querySelector(
-        '[data-drawer-visual-name]'
+        '[data-drawer-close]'
     )
 
-const drawerClientCard = document.querySelector(
-    '[data-drawer-client-card]'
-)
+const drawerTitle =
+    document.querySelector(
+        '[data-drawer-title]'
+    )
 
-const drawerClientAvatar = document.querySelector(
-    '[data-drawer-client-avatar]'
-)
+const drawerClient =
+    document.querySelector(
+        '[data-drawer-client]'
+    )
 
-const drawerClientName = document.querySelector(
-    '[data-drawer-client-name]'
-)
+const drawerDeadline =
+    document.querySelector(
+        '[data-drawer-deadline]'
+    )
 
-const drawerClientType = document.querySelector(
-    '[data-drawer-client-type]'
-)
+const drawerNotes =
+    document.querySelector(
+        '[data-drawer-notes]'
+    )
 
-const drawerClientLocation = document.querySelector(
-    '[data-drawer-client-location]'
-)
+const drawerClientSelect =
+    document.querySelector(
+        '[data-drawer-client-select]'
+    )
 
-const drawerClientDescription = document.querySelector(
-    '[data-drawer-client-description]'
-)
+const statusButtons =
+    document.querySelectorAll(
+        '[data-status-button]'
+    )
 
-const drawerClientContact = document.querySelector(
-    '[data-drawer-client-contact]'
-)
+const drawerClientScenes =
+    document.querySelectorAll(
+        '[data-drawer-client-scene]'
+    )
 
-const drawerClientEmail = document.querySelector(
-    '[data-drawer-client-email]'
-)
+const drawerClientCard =
+    document.querySelector(
+        '[data-drawer-client-card]'
+    )
 
-const drawerClientContactRow = document.querySelector(
-    '[data-drawer-client-contact-row]'
-)
+const drawerClientAvatar =
+    document.querySelector(
+        '[data-drawer-client-avatar]'
+    )
 
-const progressSlider = document.querySelector(
-    '[data-drawer-progress-slider]'
-)
+const drawerClientName =
+    document.querySelector(
+        '[data-drawer-client-name]'
+    )
 
-const progressLabel = document.querySelector(
-    '[data-drawer-progress-label]'
-)
+const drawerClientType =
+    document.querySelector(
+        '[data-drawer-client-type]'
+    )
 
-const noteInput = document.querySelector('[data-note-input]')
-const noteAddButton = document.querySelector('[data-note-add]')
+const drawerClientLocation =
+    document.querySelector(
+        '[data-drawer-client-location]'
+    )
 
-const csrfToken = document.querySelector(
-    'meta[name="csrf-token"]'
-)?.content
+const drawerClientDescription =
+    document.querySelector(
+        '[data-drawer-client-description]'
+    )
+
+const drawerClientContact =
+    document.querySelector(
+        '[data-drawer-client-contact]'
+    )
+
+const drawerClientEmail =
+    document.querySelector(
+        '[data-drawer-client-email]'
+    )
+
+const drawerClientContactRow =
+    document.querySelector(
+        '[data-drawer-client-contact-row]'
+    )
+
+const progressSlider =
+    document.querySelector(
+        '[data-drawer-progress-slider]'
+    )
+
+const progressLabel =
+    document.querySelector(
+        '[data-drawer-progress-label]'
+    )
+
+const noteInput =
+    document.querySelector(
+        '[data-note-input]'
+    )
+
+const noteAddButton =
+    document.querySelector(
+        '[data-note-add]'
+    )
+
+const drawerSaveState =
+    document.querySelector(
+        '[data-drawer-save-state]'
+    )
+
+const csrfToken =
+    document.querySelector(
+        'meta[name="csrf-token"]'
+    )?.content
+
 
 let activeProjectCard = null
+let drawerSaveTimer = null
 
 
 /* =========================================================
@@ -94,6 +138,7 @@ let activeProjectCard = null
    ========================================================= */
 
 function getClientInitials(name) {
+
     return name
         .split(' ')
         .filter(Boolean)
@@ -104,38 +149,172 @@ function getClientInitials(name) {
 }
 
 
-function updateProgressUI(value) {
-    if (progressSlider) {
-        progressSlider.value = value
+function formatDeadlineLabel(deadline) {
 
-        progressSlider.style.setProperty(
-            '--progress',
-            `${value}%`
-        )
+    if (!deadline) {
+        return 'No deadline'
     }
 
+
+    const [year, month, day] =
+        deadline
+            .split('-')
+            .map(Number)
+
+
+    const deadlineDate =
+        new Date(
+            year,
+            month - 1,
+            day
+        )
+
+
+    const today =
+        new Date()
+
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    )
+
+
+    const millisecondsPerDay =
+        1000 * 60 * 60 * 24
+
+
+    const daysUntil =
+        Math.round(
+            (
+                deadlineDate -
+                today
+            ) /
+            millisecondsPerDay
+        )
+
+
+    if (daysUntil < 0) {
+
+        const daysOverdue =
+            Math.abs(
+                daysUntil
+            )
+
+        return `Overdue ${daysOverdue} ${
+            daysOverdue === 1
+                ? 'day'
+                : 'days'
+        }`
+    }
+
+
+    if (daysUntil === 0) {
+        return 'Due today'
+    }
+
+
+    if (daysUntil === 1) {
+        return 'Due tomorrow'
+    }
+
+
+    if (daysUntil <= 7) {
+        return `Due in ${daysUntil} days`
+    }
+
+
+    return `Due ${
+        deadlineDate.toLocaleDateString(
+            'en-GB',
+            {
+                day: 'numeric',
+                month: 'short',
+            }
+        )
+    }`
+}
+
+
+function showSavedState() {
+
+    if (!drawerSaveState) {
+        return
+    }
+
+
+    clearTimeout(
+        drawerSaveTimer
+    )
+
+
+    drawerSaveState.classList.add(
+        'is-visible'
+    )
+
+
+    drawerSaveTimer =
+        setTimeout(() => {
+
+            drawerSaveState
+                .classList
+                .remove(
+                    'is-visible'
+                )
+
+        }, 1600)
+}
+
+
+function updateProgressUI(value) {
+
+    if (progressSlider) {
+
+        progressSlider.value =
+            value
+
+        progressSlider
+            .style
+            .setProperty(
+                '--progress',
+                `${value}%`
+            )
+    }
+
+
     if (progressLabel) {
+
         progressLabel.textContent =
             `${value}%`
     }
 
+
     if (activeProjectCard) {
+
         const cardLabel =
-            activeProjectCard.querySelector(
-                '.project-card__progress-info strong'
-            )
+            activeProjectCard
+                .querySelector(
+                    '.project-card__progress-info strong'
+                )
 
         const cardBar =
-            activeProjectCard.querySelector(
-                '.progress-track span'
-            )
+            activeProjectCard
+                .querySelector(
+                    '.progress-track span'
+                )
+
 
         if (cardLabel) {
+
             cardLabel.textContent =
                 `${value}%`
         }
 
+
         if (cardBar) {
+
             cardBar.style.width =
                 `${value}%`
         }
@@ -152,14 +331,18 @@ function updateColumnCounts() {
         .forEach((column) => {
 
             const count =
-                column.querySelectorAll(
-                    '.project-card'
-                ).length
+                column
+                    .querySelectorAll(
+                        '.project-card'
+                    )
+                    .length
+
 
             const countElement =
                 column.querySelector(
                     '.workflow-column__count'
                 )
+
 
             const emptyState =
                 column.querySelector(
@@ -168,16 +351,17 @@ function updateColumnCounts() {
 
 
             if (countElement) {
+
                 countElement.textContent =
                     count
             }
 
 
             if (emptyState) {
+
                 emptyState.hidden =
                     count > 0
             }
-
         })
 }
 
@@ -187,79 +371,114 @@ function updateColumnCounts() {
    ========================================================= */
 
 function openDrawer(card) {
-    activeProjectCard = card
+
+    activeProjectCard =
+        card
+
 
     projectCards.forEach(
-    (projectCard) => {
-        projectCard.classList.remove(
-            'is-selected'
-        )
-    }
-)
+        (projectCard) => {
 
-card.classList.add(
-    'is-selected'
-)
+            projectCard
+                .classList
+                .remove(
+                    'is-selected'
+                )
+        }
+    )
+
+
+    card.classList.add(
+        'is-selected'
+    )
+
+
     const clientSlug =
-        card.dataset.projectClientSlug
+        card.dataset
+            .projectClientSlug
 
     const title =
-        card.dataset.projectTitle
+        card.dataset
+            .projectTitle
 
     const client =
-        card.dataset.projectClient
+        card.dataset
+            .projectClient
 
     const clientId =
-        card.dataset.projectClientId
+        card.dataset
+            .projectClientId
 
     const clientType =
-        card.dataset.projectClientType
+        card.dataset
+            .projectClientType
 
     const clientLocation =
-        card.dataset.projectClientLocation
+        card.dataset
+            .projectClientLocation
 
     const clientDescription =
-        card.dataset.projectClientDescription
+        card.dataset
+            .projectClientDescription
 
     const clientContact =
-        card.dataset.projectClientContact
+        card.dataset
+            .projectClientContact
 
     const clientEmail =
-        card.dataset.projectClientEmail
+        card.dataset
+            .projectClientEmail
 
     const clientColor =
-        card.dataset.projectClientColor
+        card.dataset
+            .projectClientColor
 
     const status =
-        card.dataset.projectStatus
+        card.dataset
+            .projectStatus
 
     const deadline =
-        card.dataset.projectDeadline
+        card.dataset
+            .projectDeadline
 
     const progress =
-        card.dataset.projectProgress
+        card.dataset
+            .projectProgress
 
-    const notes = JSON.parse(
-        card.dataset.projectNotes || '[]'
-    )
+
+    const notes =
+        JSON.parse(
+            card.dataset
+                .projectNotes ||
+            '[]'
+        )
 
 
     /* Project info */
 
     if (drawerTitle) {
-        drawerTitle.textContent = title
+
+        drawerTitle.textContent =
+            title
     }
+
 
     if (drawerClient) {
-        drawerClient.textContent = client
+
+        drawerClient.textContent =
+            client
     }
 
+
     if (drawerDeadline) {
+
         drawerDeadline.value =
             deadline || ''
     }
 
+
     if (drawerClientSelect) {
+
         drawerClientSelect.value =
             clientId || ''
     }
@@ -268,39 +487,58 @@ card.classList.add(
     /* Client details */
 
     if (drawerClientName) {
+
         drawerClientName.textContent =
             client
     }
 
-    if (drawerClientAvatar) {
-        drawerClientAvatar.textContent =
-            getClientInitials(client)
 
-        drawerClientAvatar.style.background =
+    if (drawerClientAvatar) {
+
+        drawerClientAvatar.textContent =
+            getClientInitials(
+                client
+            )
+
+        drawerClientAvatar
+            .style
+            .background =
             clientColor
     }
 
+
     if (drawerClientType) {
+
         drawerClientType.textContent =
-            clientType || 'Client'
+            clientType ||
+            'Client'
     }
 
+
     if (drawerClientLocation) {
+
         drawerClientLocation.textContent =
             clientLocation || ''
     }
 
+
     if (drawerClientDescription) {
-        drawerClientDescription.textContent =
+
+        drawerClientDescription
+            .textContent =
             clientDescription || ''
     }
 
+
     if (drawerClientContact) {
+
         drawerClientContact.textContent =
             clientContact || ''
     }
 
+
     if (drawerClientEmail) {
+
         drawerClientEmail.textContent =
             clientEmail || ''
 
@@ -310,119 +548,147 @@ card.classList.add(
                 : '#'
     }
 
+
     if (drawerClientContactRow) {
+
         drawerClientContactRow.hidden =
             !clientContact &&
             !clientEmail
     }
 
+
     if (drawerClientCard) {
-        drawerClientCard.style.setProperty(
-            '--client-accent',
-            clientColor
-        )
+
+        drawerClientCard
+            .style
+            .setProperty(
+                '--client-accent',
+                clientColor
+            )
     }
 
-    /* Drawer visual */
 
-const isNoordgroeiT =
-    clientSlug === 'noordgroeit'
+    /* Client illustration */
 
+    drawerClientScenes.forEach(
+        (scene) => {
 
-if (drawerLandscape) {
-    drawerLandscape.hidden =
-        !isNoordgroeiT
-}
+            const isCurrentClient =
+                scene.dataset
+                    .drawerClientScene ===
+                clientSlug
 
-
-if (drawerGenericVisual) {
-    drawerGenericVisual.hidden =
-        isNoordgroeiT
-
-    drawerGenericVisual.style.setProperty(
-        '--client-accent',
-        clientColor
+            scene.hidden =
+                !isCurrentClient
+        }
     )
-}
 
-
-if (drawerVisualInitials) {
-    drawerVisualInitials.textContent =
-        getClientInitials(client)
-}
-
-
-if (drawerVisualName) {
-    drawerVisualName.textContent =
-        client
-}
 
     /* Status */
 
-    statusButtons.forEach((button) => {
-        const isActive =
-            button.dataset.statusButton ===
-            status
+    statusButtons.forEach(
+        (button) => {
 
-        button.classList.toggle(
-            'is-active',
-            isActive
-        )
-    })
+            const isActive =
+                button.dataset
+                    .statusButton ===
+                status
+
+            button.classList.toggle(
+                'is-active',
+                isActive
+            )
+        }
+    )
 
 
     /* Progress */
 
-    updateProgressUI(progress)
+    updateProgressUI(
+        progress
+    )
 
 
     /* Notes */
 
     if (drawerNotes) {
-        drawerNotes.innerHTML = ''
+
+        drawerNotes.innerHTML =
+            ''
+
 
         if (notes.length === 0) {
+
             drawerNotes.innerHTML = `
                 <p class="drawer-notes__empty">
                     No notes yet.
                 </p>
             `
+
         } else {
-            notes.forEach((note) => {
-                const item =
-                    document.createElement('div')
 
-                item.classList.add(
-                    'drawer-note'
-                )
+            notes.forEach(
+                (note) => {
 
-                item.innerHTML = `
-                    <span class="drawer-note__dot"></span>
-                    <span></span>
-                `
+                    const item =
+                        document
+                            .createElement(
+                                'div'
+                            )
 
-                item.querySelector(
-                    'span:last-child'
-                ).textContent = note
+                    item.classList.add(
+                        'drawer-note'
+                    )
 
-                drawerNotes.appendChild(item)
-            })
+
+                    item.innerHTML = `
+                        <span class="drawer-note__dot"></span>
+                        <span></span>
+                    `
+
+
+                    item.querySelector(
+                        'span:last-child'
+                    ).textContent =
+                        note
+
+
+                    drawerNotes
+                        .appendChild(
+                            item
+                        )
+                }
+            )
         }
     }
 
 
     if (noteInput) {
-        noteInput.value = ''
+
+        noteInput.value =
+            ''
     }
 
 
-    drawer?.classList.add('is-open')
-    backdrop?.classList.add('is-open')
+    drawer
+        ?.classList
+        .add(
+            'is-open'
+        )
 
-    drawer?.setAttribute(
-        'aria-hidden',
-        'false'
-    )
+
+    backdrop
+        ?.classList
+        .add(
+            'is-open'
+        )
+
+
+    drawer
+        ?.setAttribute(
+            'aria-hidden',
+            'false'
+        )
 }
 
 
@@ -431,17 +697,37 @@ if (drawerVisualName) {
    ========================================================= */
 
 function closeDrawer() {
-    drawer?.classList.remove('is-open')
-    backdrop?.classList.remove('is-open')
 
-    drawer?.setAttribute(
-        'aria-hidden',
-        'true'
-    )
-    activeProjectCard?.classList.remove(
-    'is-selected'
-)
-    activeProjectCard = null
+    drawer
+        ?.classList
+        .remove(
+            'is-open'
+        )
+
+
+    backdrop
+        ?.classList
+        .remove(
+            'is-open'
+        )
+
+
+    drawer
+        ?.setAttribute(
+            'aria-hidden',
+            'true'
+        )
+
+
+    activeProjectCard
+        ?.classList
+        .remove(
+            'is-selected'
+        )
+
+
+    activeProjectCard =
+        null
 }
 
 
@@ -449,168 +735,135 @@ function closeDrawer() {
    PROJECT CARD EVENTS
    ========================================================= */
 
-projectCards.forEach((card) => {
-    card.addEventListener(
-        'click',
-        () => {
-            openDrawer(card)
-        }
-    )
+projectCards.forEach(
+    (card) => {
 
-    card.addEventListener(
-        'keydown',
-        (event) => {
-            if (
-                event.key === 'Enter' ||
-                event.key === ' '
-            ) {
-                event.preventDefault()
-                openDrawer(card)
-            }
+        const deadlineLabel =
+            card.querySelector(
+                '[data-card-deadline]'
+            )
+
+
+        if (!deadlineLabel) {
+            return
         }
-    )
-})
+
+
+        const formattedDeadline =
+            formatDeadlineLabel(
+                card.dataset
+                    .projectDeadline
+            )
+
+
+        deadlineLabel.textContent =
+            formattedDeadline
+
+
+        deadlineLabel
+            .classList
+            .toggle(
+                'is-overdue',
+                formattedDeadline
+                    .startsWith(
+                        'Overdue'
+                    )
+            )
+    }
+)
+
+
+projectCards.forEach(
+    (card) => {
+
+        card.addEventListener(
+            'click',
+            () => {
+
+                openDrawer(
+                    card
+                )
+            }
+        )
+
+
+        card.addEventListener(
+            'keydown',
+            (event) => {
+
+                if (
+                    event.key ===
+                        'Enter' ||
+                    event.key ===
+                        ' '
+                ) {
+
+                    event.preventDefault()
+
+                    openDrawer(
+                        card
+                    )
+                }
+            }
+        )
+    }
+)
 
 
 /* =========================================================
    PROGRESS SLIDER
    ========================================================= */
 
-progressSlider?.addEventListener(
-    'input',
-    (event) => {
-        updateProgressUI(
-            event.target.value
-        )
-    }
-)
-
-
-progressSlider?.addEventListener(
-    'change',
-    async (event) => {
-        if (!activeProjectCard) {
-            return
-        }
-
-        const projectId =
-            activeProjectCard.dataset.projectId
-
-        const previousProgress =
-            activeProjectCard.dataset.projectProgress
-
-        const newProgress =
-            event.target.value
-
-        progressSlider.disabled = true
-
-        try {
-            const response =
-                await fetch(
-                    `/projects/${projectId}/progress`,
-                    {
-                        method: 'PATCH',
-
-                        headers: {
-                            'Content-Type':
-                                'application/json',
-
-                            'Accept':
-                                'application/json',
-
-                            'X-CSRF-TOKEN':
-                                csrfToken,
-                        },
-
-                        body: JSON.stringify({
-                            progress:
-                                Number(newProgress),
-                        }),
-                    }
-                )
-
-            if (!response.ok) {
-                throw new Error(
-                    'Could not save project progress.'
-                )
-            }
-
-            const data =
-                await response.json()
-
-            const savedProgress =
-                String(data.progress)
-
-            activeProjectCard
-                .dataset.projectProgress =
-                savedProgress
+progressSlider
+    ?.addEventListener(
+        'input',
+        (event) => {
 
             updateProgressUI(
-                savedProgress
+                event.target.value
             )
-
-        } catch (error) {
-            console.error(error)
-
-            updateProgressUI(
-                previousProgress
-            )
-
-            alert(
-                'Progress could not be saved.'
-            )
-
-        } finally {
-            progressSlider.disabled =
-                false
         }
-    }
-)
+    )
 
 
-/* =========================================================
-   PROJECT STATUS
-   ========================================================= */
+progressSlider
+    ?.addEventListener(
+        'change',
+        async (event) => {
 
-statusButtons.forEach((button) => {
-    button.addEventListener(
-        'click',
-        async () => {
             if (!activeProjectCard) {
                 return
             }
 
+
             const projectId =
                 activeProjectCard
-                    .dataset.projectId
+                    .dataset
+                    .projectId
 
-            const previousStatus =
+
+            const previousProgress =
                 activeProjectCard
-                    .dataset.projectStatus
+                    .dataset
+                    .projectProgress
 
-            const newStatus =
-                button.dataset.statusButton
 
-            if (
-                previousStatus ===
-                newStatus
-            ) {
-                return
-            }
+            const newProgress =
+                event.target.value
 
-            statusButtons.forEach(
-                (statusButton) => {
-                    statusButton.disabled =
-                        true
-                }
-            )
+
+            progressSlider.disabled =
+                true
+
 
             try {
+
                 const response =
                     await fetch(
-                        `/projects/${projectId}/status`,
+                        `/projects/${projectId}/progress`,
                         {
-                            method: 'PATCH',
+                            method:
+                                'PATCH',
 
                             headers: {
                                 'Content-Type':
@@ -625,451 +878,795 @@ statusButtons.forEach((button) => {
 
                             body:
                                 JSON.stringify({
-                                    status:
-                                        newStatus,
+                                    progress:
+                                        Number(
+                                            newProgress
+                                        ),
                                 }),
                         }
                     )
 
+
                 if (!response.ok) {
+
                     throw new Error(
-                        'Could not save project status.'
+                        'Could not save project progress.'
                     )
                 }
+
 
                 const data =
-                    await response.json()
+                    await response
+                        .json()
 
-const savedStatus =
-    data.status
 
-activeProjectCard
-    .dataset.projectStatus =
-    savedStatus
-
-activeProjectCard
-    .dataset.cardStatus =
-    savedStatus
-
-                statusButtons.forEach(
-                    (statusButton) => {
-                        statusButton
-                            .classList
-                            .toggle(
-                                'is-active',
-
-                                statusButton
-                                    .dataset
-                                    .statusButton ===
-                                    savedStatus
-                            )
-                    }
-                )
-
-                const targetColumn =
-                    document.querySelector(
-                        `[data-status-column="${savedStatus}"]`
+                const savedProgress =
+                    String(
+                        data.progress
                     )
 
-                const targetCardContainer =
-                    targetColumn
-                        ?.querySelector(
-                            '.workflow-column__cards'
-                        )
 
-                if (
-                    targetCardContainer &&
-                    activeProjectCard
-                ) {
-                    targetCardContainer
-                        .appendChild(
-                            activeProjectCard
-                        )
-                }
+                activeProjectCard
+                    .dataset
+                    .projectProgress =
+                    savedProgress
 
-                updateColumnCounts()
+
+                updateProgressUI(
+                    savedProgress
+                )
+
+
+                showSavedState()
 
             } catch (error) {
-                console.error(error)
+
+                console.error(
+                    error
+                )
+
+
+                updateProgressUI(
+                    previousProgress
+                )
+
 
                 alert(
-                    'Project status could not be saved.'
+                    'Progress could not be saved.'
                 )
 
             } finally {
-                statusButtons.forEach(
-                    (statusButton) => {
-                        statusButton.disabled =
-                            false
-                    }
-                )
+
+                progressSlider.disabled =
+                    false
             }
         }
     )
-})
+
+
+/* =========================================================
+   PROJECT STATUS
+   ========================================================= */
+
+statusButtons.forEach(
+    (button) => {
+
+        button.addEventListener(
+            'click',
+            async () => {
+
+                if (!activeProjectCard) {
+                    return
+                }
+
+
+                const projectId =
+                    activeProjectCard
+                        .dataset
+                        .projectId
+
+
+                const previousStatus =
+                    activeProjectCard
+                        .dataset
+                        .projectStatus
+
+
+                const newStatus =
+                    button.dataset
+                        .statusButton
+
+
+                if (
+                    previousStatus ===
+                    newStatus
+                ) {
+                    return
+                }
+
+
+                statusButtons.forEach(
+                    (statusButton) => {
+
+                        statusButton.disabled =
+                            true
+                    }
+                )
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/projects/${projectId}/status`,
+                            {
+                                method:
+                                    'PATCH',
+
+                                headers: {
+                                    'Content-Type':
+                                        'application/json',
+
+                                    'Accept':
+                                        'application/json',
+
+                                    'X-CSRF-TOKEN':
+                                        csrfToken,
+                                },
+
+                                body:
+                                    JSON.stringify({
+                                        status:
+                                            newStatus,
+                                    }),
+                            }
+                        )
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            'Could not save project status.'
+                        )
+                    }
+
+
+                    const data =
+                        await response
+                            .json()
+
+
+                    const savedStatus =
+                        data.status
+
+
+                    activeProjectCard
+                        .dataset
+                        .projectStatus =
+                        savedStatus
+
+
+                    activeProjectCard
+                        .dataset
+                        .cardStatus =
+                        savedStatus
+
+
+                    const cardStatusLabel =
+                        activeProjectCard
+                            .querySelector(
+                                '.project-card__status'
+                            )
+
+
+                    const statusLabels = {
+                        design:
+                            'Design',
+
+                        development:
+                            'Development',
+
+                        feedback:
+                            'Feedback',
+
+                        done:
+                            'Done',
+                    }
+
+
+                    if (cardStatusLabel) {
+
+                        cardStatusLabel
+                            .textContent =
+                            statusLabels[
+                                savedStatus
+                            ] ||
+                            savedStatus
+                    }
+
+
+                    statusButtons.forEach(
+                        (statusButton) => {
+
+                            statusButton
+                                .classList
+                                .toggle(
+                                    'is-active',
+
+                                    statusButton
+                                        .dataset
+                                        .statusButton ===
+                                    savedStatus
+                                )
+                        }
+                    )
+
+
+                    const targetColumn =
+                        document
+                            .querySelector(
+                                `[data-status-column="${savedStatus}"]`
+                            )
+
+
+                    const targetCardContainer =
+                        targetColumn
+                            ?.querySelector(
+                                '.workflow-column__cards'
+                            )
+
+
+                    if (
+                        targetCardContainer &&
+                        activeProjectCard
+                    ) {
+
+                        targetCardContainer
+                            .appendChild(
+                                activeProjectCard
+                            )
+                    }
+
+
+                    updateColumnCounts()
+
+                    showSavedState()
+
+                } catch (error) {
+
+                    console.error(
+                        error
+                    )
+
+
+                    alert(
+                        'Project status could not be saved.'
+                    )
+
+                } finally {
+
+                    statusButtons.forEach(
+                        (statusButton) => {
+
+                            statusButton.disabled =
+                                false
+                        }
+                    )
+                }
+            }
+        )
+    }
+)
 
 
 /* =========================================================
    PROJECT DEADLINE
    ========================================================= */
 
-drawerDeadline?.addEventListener(
-    'change',
-    async (event) => {
-        if (!activeProjectCard) {
-            return
-        }
+drawerDeadline
+    ?.addEventListener(
+        'change',
+        async (event) => {
 
-        const projectId =
-            activeProjectCard.dataset.projectId
-
-        const previousDeadline =
-            activeProjectCard
-                .dataset.projectDeadline
-
-        const newDeadline =
-            event.target.value
-
-        drawerDeadline.disabled = true
-
-        try {
-            const response =
-                await fetch(
-                    `/projects/${projectId}/deadline`,
-                    {
-                        method: 'PATCH',
-
-                        headers: {
-                            'Content-Type':
-                                'application/json',
-
-                            'Accept':
-                                'application/json',
-
-                            'X-CSRF-TOKEN':
-                                csrfToken,
-                        },
-
-                        body:
-                            JSON.stringify({
-                                deadline:
-                                    newDeadline ||
-                                    null,
-                            }),
-                    }
-                )
-
-            if (!response.ok) {
-                throw new Error(
-                    'Could not save project deadline.'
-                )
+            if (!activeProjectCard) {
+                return
             }
 
-            const data =
-                await response.json()
 
-            const savedDeadline =
-                data.deadline || ''
-
-            activeProjectCard
-                .dataset.projectDeadline =
-                savedDeadline
-
-            const cardDeadline =
+            const projectId =
                 activeProjectCard
-                    .querySelector(
-                        '[data-card-deadline]'
+                    .dataset
+                    .projectId
+
+
+            const previousDeadline =
+                activeProjectCard
+                    .dataset
+                    .projectDeadline
+
+
+            const newDeadline =
+                event.target.value
+
+
+            drawerDeadline.disabled =
+                true
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/projects/${projectId}/deadline`,
+                        {
+                            method:
+                                'PATCH',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json',
+
+                                'Accept':
+                                    'application/json',
+
+                                'X-CSRF-TOKEN':
+                                    csrfToken,
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    deadline:
+                                        newDeadline ||
+                                        null,
+                                }),
+                        }
                     )
 
-            if (cardDeadline) {
-                cardDeadline.textContent =
-                    savedDeadline ||
-                    'No deadline'
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        'Could not save project deadline.'
+                    )
+                }
+
+
+                const data =
+                    await response
+                        .json()
+
+
+                const savedDeadline =
+                    data.deadline ||
+                    ''
+
+
+                activeProjectCard
+                    .dataset
+                    .projectDeadline =
+                    savedDeadline
+
+
+                const cardDeadline =
+                    activeProjectCard
+                        .querySelector(
+                            '[data-card-deadline]'
+                        )
+
+
+                if (cardDeadline) {
+
+                    cardDeadline
+                        .textContent =
+                        formatDeadlineLabel(
+                            savedDeadline
+                        )
+
+
+                    cardDeadline
+                        .classList
+                        .toggle(
+                            'is-overdue',
+
+                            cardDeadline
+                                .textContent
+                                .startsWith(
+                                    'Overdue'
+                                )
+                        )
+                }
+
+
+                drawerDeadline.value =
+                    savedDeadline
+
+
+                showSavedState()
+
+            } catch (error) {
+
+                console.error(
+                    error
+                )
+
+
+                drawerDeadline.value =
+                    previousDeadline ||
+                    ''
+
+
+                alert(
+                    'Project deadline could not be saved.'
+                )
+
+            } finally {
+
+                drawerDeadline.disabled =
+                    false
             }
-
-            drawerDeadline.value =
-                savedDeadline
-
-        } catch (error) {
-            console.error(error)
-
-            drawerDeadline.value =
-                previousDeadline || ''
-
-            alert(
-                'Project deadline could not be saved.'
-            )
-
-        } finally {
-            drawerDeadline.disabled =
-                false
         }
-    }
-)
+    )
 
 
 /* =========================================================
    PROJECT CLIENT
    ========================================================= */
 
-drawerClientSelect?.addEventListener(
-    'change',
-    async (event) => {
-        if (!activeProjectCard) {
-            return
-        }
+drawerClientSelect
+    ?.addEventListener(
+        'change',
+        async (event) => {
 
-        const projectId =
-            activeProjectCard
-                .dataset.projectId
-
-        const previousClientId =
-            activeProjectCard
-                .dataset.projectClientId
-
-        const newClientId =
-            event.target.value
-
-        if (
-            previousClientId ===
-            newClientId
-        ) {
-            return
-        }
-
-        drawerClientSelect.disabled =
-            true
-
-        try {
-            const response =
-                await fetch(
-                    `/projects/${projectId}/client`,
-                    {
-                        method: 'PATCH',
-
-                        headers: {
-                            'Content-Type':
-                                'application/json',
-
-                            'Accept':
-                                'application/json',
-
-                            'X-CSRF-TOKEN':
-                                csrfToken,
-                        },
-
-                        body:
-                            JSON.stringify({
-                                client_id:
-                                    Number(
-                                        newClientId
-                                    ),
-                            }),
-                    }
-                )
-
-            const data =
-                await response.json()
-
-            if (!response.ok) {
-                const validationErrors =
-                    data.errors
-                        ? Object.values(
-                            data.errors
-                        )
-                            .flat()
-                            .join(' ')
-                        : null
-
-                throw new Error(
-                    validationErrors ||
-                    data.message ||
-                    'Could not change client.'
-                )
+            if (!activeProjectCard) {
+                return
             }
 
-            /*
-             * Reload because the project may now
-             * belong to another filtered client.
-             */
-            window.location.reload()
 
-        } catch (error) {
-            console.error(error)
+            const projectId =
+                activeProjectCard
+                    .dataset
+                    .projectId
 
-            drawerClientSelect.value =
-                previousClientId
 
-            alert(
-                error.message ||
-                'Project client could not be changed.'
-            )
+            const previousClientId =
+                activeProjectCard
+                    .dataset
+                    .projectClientId
 
-        } finally {
+
+            const newClientId =
+                event.target.value
+
+
+            if (
+                previousClientId ===
+                newClientId
+            ) {
+                return
+            }
+
+
             drawerClientSelect.disabled =
-                false
+                true
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/projects/${projectId}/client`,
+                        {
+                            method:
+                                'PATCH',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json',
+
+                                'Accept':
+                                    'application/json',
+
+                                'X-CSRF-TOKEN':
+                                    csrfToken,
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    client_id:
+                                        Number(
+                                            newClientId
+                                        ),
+                                }),
+                        }
+                    )
+
+
+                const data =
+                    await response
+                        .json()
+
+
+                if (!response.ok) {
+
+                    const validationErrors =
+                        data.errors
+                            ? Object
+                                .values(
+                                    data.errors
+                                )
+                                .flat()
+                                .join(' ')
+                            : null
+
+
+                    throw new Error(
+                        validationErrors ||
+                        data.message ||
+                        'Could not change client.'
+                    )
+                }
+
+
+                /*
+                 * Reload because the project may now
+                 * belong to another filtered client.
+                 */
+
+                window.location.reload()
+
+            } catch (error) {
+
+                console.error(
+                    error
+                )
+
+
+                drawerClientSelect.value =
+                    previousClientId
+
+
+                alert(
+                    error.message ||
+                    'Project client could not be changed.'
+                )
+
+            } finally {
+
+                drawerClientSelect.disabled =
+                    false
+            }
         }
-    }
-)
+    )
 
 
 /* =========================================================
    ADD NOTE
    ========================================================= */
 
-noteAddButton?.addEventListener(
-    'click',
-    async () => {
-        if (
-            !activeProjectCard ||
-            !noteInput
-        ) {
-            return
-        }
+noteAddButton
+    ?.addEventListener(
+        'click',
+        async () => {
 
-        const content =
-            noteInput.value.trim()
-
-        if (!content) {
-            return
-        }
-
-        const projectId =
-            activeProjectCard
-                .dataset.projectId
-
-        noteAddButton.disabled = true
-        noteAddButton.textContent =
-            'Adding...'
-
-        try {
-            const response =
-                await fetch(
-                    `/projects/${projectId}/notes`,
-                    {
-                        method: 'POST',
-
-                        headers: {
-                            'Content-Type':
-                                'application/json',
-
-                            'Accept':
-                                'application/json',
-
-                            'X-CSRF-TOKEN':
-                                csrfToken,
-                        },
-
-                        body:
-                            JSON.stringify({
-                                content,
-                            }),
-                    }
-                )
-
-            if (!response.ok) {
-                throw new Error(
-                    'Could not save note.'
-                )
+            if (
+                !activeProjectCard ||
+                !noteInput
+            ) {
+                return
             }
 
-            const data =
-                await response.json()
 
-            const noteElement =
-                document
-                    .createElement('div')
+            const content =
+                noteInput
+                    .value
+                    .trim()
 
-            noteElement
-                .classList
-                .add('drawer-note')
 
-            noteElement.innerHTML = `
-                <span class="drawer-note__dot"></span>
-                <span></span>
-            `
+            if (!content) {
+                return
+            }
 
-            noteElement
-                .querySelector(
-                    'span:last-child'
-                )
-                .textContent =
-                data.note.content
 
-            drawerNotes
-                ?.querySelector(
-                    '.drawer-notes__empty'
-                )
-                ?.remove()
+            const projectId =
+                activeProjectCard
+                    .dataset
+                    .projectId
 
-            drawerNotes?.appendChild(
-                noteElement
-            )
 
-            const existingNotes =
-                JSON.parse(
-                    activeProjectCard
-                        .dataset
-                        .projectNotes ||
-                    '[]'
-                )
-
-            existingNotes.push(
-                data.note.content
-            )
-
-            activeProjectCard
-                .dataset.projectNotes =
-                JSON.stringify(
-                    existingNotes
-                )
-
-            noteInput.value = ''
-            noteInput.focus()
-
-        } catch (error) {
-            console.error(error)
-
-            alert(
-                'The note could not be saved.'
-            )
-
-        } finally {
             noteAddButton.disabled =
-                false
+                true
+
 
             noteAddButton.textContent =
-                'Add'
+                'Adding...'
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/projects/${projectId}/notes`,
+                        {
+                            method:
+                                'POST',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json',
+
+                                'Accept':
+                                    'application/json',
+
+                                'X-CSRF-TOKEN':
+                                    csrfToken,
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    content,
+                                }),
+                        }
+                    )
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        'Could not save note.'
+                    )
+                }
+
+
+                const data =
+                    await response
+                        .json()
+
+
+                const noteElement =
+                    document
+                        .createElement(
+                            'div'
+                        )
+
+
+                noteElement
+                    .classList
+                    .add(
+                        'drawer-note'
+                    )
+
+
+                noteElement.innerHTML = `
+                    <span class="drawer-note__dot"></span>
+                    <span></span>
+                `
+
+
+                noteElement
+                    .querySelector(
+                        'span:last-child'
+                    )
+                    .textContent =
+                    data.note.content
+
+
+                drawerNotes
+                    ?.querySelector(
+                        '.drawer-notes__empty'
+                    )
+                    ?.remove()
+
+
+                drawerNotes
+                    ?.appendChild(
+                        noteElement
+                    )
+
+
+                const existingNotes =
+                    JSON.parse(
+                        activeProjectCard
+                            .dataset
+                            .projectNotes ||
+                        '[]'
+                    )
+
+
+                existingNotes.push(
+                    data.note.content
+                )
+
+
+                activeProjectCard
+                    .dataset
+                    .projectNotes =
+                    JSON.stringify(
+                        existingNotes
+                    )
+
+
+                const noteCount =
+                    activeProjectCard
+                        .querySelector(
+                            '[data-card-note-count]'
+                        )
+
+
+                if (noteCount) {
+
+                    noteCount.textContent =
+                        existingNotes.length
+                }
+
+
+                noteInput.value =
+                    ''
+
+
+                noteInput.focus()
+
+
+                showSavedState()
+
+            } catch (error) {
+
+                console.error(
+                    error
+                )
+
+
+                alert(
+                    'The note could not be saved.'
+                )
+
+            } finally {
+
+                noteAddButton.disabled =
+                    false
+
+
+                noteAddButton.textContent =
+                    'Add'
+            }
         }
-    }
-)
+    )
 
 
-noteInput?.addEventListener(
-    'keydown',
-    (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault()
+noteInput
+    ?.addEventListener(
+        'keydown',
+        (event) => {
 
-            noteAddButton?.click()
+            if (
+                event.key ===
+                'Enter'
+            ) {
+
+                event.preventDefault()
+
+                noteAddButton
+                    ?.click()
+            }
         }
-    }
-)
+    )
 
 
 /* =========================================================
    DRAWER CLOSE EVENTS
    ========================================================= */
 
-closeButton?.addEventListener(
-    'click',
-    closeDrawer
-)
+closeButton
+    ?.addEventListener(
+        'click',
+        closeDrawer
+    )
 
-backdrop?.addEventListener(
-    'click',
-    closeDrawer
-)
+
+backdrop
+    ?.addEventListener(
+        'click',
+        closeDrawer
+    )
 
 
 /* =========================================================
@@ -1081,23 +1678,32 @@ const deadlineWidget =
         '[data-deadline-project]'
     )
 
-deadlineWidget?.addEventListener(
-    'click',
-    () => {
-        const projectId =
-            deadlineWidget
-                .dataset.deadlineProject
 
-        const projectCard =
-            document.querySelector(
-                `[data-project-card][data-project-id="${projectId}"]`
-            )
+deadlineWidget
+    ?.addEventListener(
+        'click',
+        () => {
 
-        if (projectCard) {
-            openDrawer(projectCard)
+            const projectId =
+                deadlineWidget
+                    .dataset
+                    .deadlineProject
+
+
+            const projectCard =
+                document.querySelector(
+                    `[data-project-card][data-project-id="${projectId}"]`
+                )
+
+
+            if (projectCard) {
+
+                openDrawer(
+                    projectCard
+                )
+            }
         }
-    }
-)
+    )
 
 
 /* =========================================================
@@ -1156,202 +1762,268 @@ const newProjectProgressLabel =
 
 
 function openNewProjectModal() {
-    newProjectModal?.classList.add(
-        'is-open'
-    )
 
-    newProjectBackdrop?.classList.add(
-        'is-open'
-    )
-
-    newProjectModal?.setAttribute(
-        'aria-hidden',
-        'false'
-    )
-
-    const titleInput =
-        newProjectForm?.querySelector(
-            '[name="title"]'
+    newProjectModal
+        ?.classList
+        .add(
+            'is-open'
         )
 
+
+    newProjectBackdrop
+        ?.classList
+        .add(
+            'is-open'
+        )
+
+
+    newProjectModal
+        ?.setAttribute(
+            'aria-hidden',
+            'false'
+        )
+
+
+    const titleInput =
+        newProjectForm
+            ?.querySelector(
+                '[name="title"]'
+            )
+
+
     setTimeout(() => {
-        titleInput?.focus()
+
+        titleInput
+            ?.focus()
+
     }, 100)
 }
 
 
 function closeNewProjectModal() {
-    newProjectModal?.classList.remove(
-        'is-open'
-    )
 
-    newProjectBackdrop?.classList.remove(
-        'is-open'
-    )
+    newProjectModal
+        ?.classList
+        .remove(
+            'is-open'
+        )
 
-    newProjectModal?.setAttribute(
-        'aria-hidden',
-        'true'
-    )
+
+    newProjectBackdrop
+        ?.classList
+        .remove(
+            'is-open'
+        )
+
+
+    newProjectModal
+        ?.setAttribute(
+            'aria-hidden',
+            'true'
+        )
+
 
     if (newProjectError) {
-        newProjectError.hidden = true
-        newProjectError.textContent = ''
+
+        newProjectError.hidden =
+            true
+
+        newProjectError.textContent =
+            ''
     }
 }
 
 
-newProjectButton?.addEventListener(
-    'click',
-    openNewProjectModal
-)
-
-closeNewProjectButton?.addEventListener(
-    'click',
-    closeNewProjectModal
-)
-
-cancelNewProjectButton?.addEventListener(
-    'click',
-    closeNewProjectModal
-)
-
-newProjectBackdrop?.addEventListener(
-    'click',
-    closeNewProjectModal
-)
+newProjectButton
+    ?.addEventListener(
+        'click',
+        openNewProjectModal
+    )
 
 
-newProjectProgress?.addEventListener(
-    'input',
-    (event) => {
-        if (
-            newProjectProgressLabel
-        ) {
-            newProjectProgressLabel
-                .textContent =
-                `${event.target.value}%`
+closeNewProjectButton
+    ?.addEventListener(
+        'click',
+        closeNewProjectModal
+    )
+
+
+cancelNewProjectButton
+    ?.addEventListener(
+        'click',
+        closeNewProjectModal
+    )
+
+
+newProjectBackdrop
+    ?.addEventListener(
+        'click',
+        closeNewProjectModal
+    )
+
+
+newProjectProgress
+    ?.addEventListener(
+        'input',
+        (event) => {
+
+            if (
+                newProjectProgressLabel
+            ) {
+
+                newProjectProgressLabel
+                    .textContent =
+                    `${event.target.value}%`
+            }
         }
-    }
-)
+    )
 
 
-newProjectForm?.addEventListener(
-    'submit',
-    async (event) => {
-        event.preventDefault()
+newProjectForm
+    ?.addEventListener(
+        'submit',
+        async (event) => {
 
-        const formData =
-            new FormData(
-                newProjectForm
-            )
+            event.preventDefault()
 
-        const projectData = {
-            title:
-                formData.get('title'),
 
-            client_id:
-                Number(
-                    formData.get(
-                        'client_id'
-                    )
-                ),
-
-            status:
-                formData.get('status'),
-
-            deadline:
-                formData.get(
-                    'deadline'
-                ) || null,
-
-            progress:
-                Number(
-                    formData.get(
-                        'progress'
-                    )
-                ),
-        }
-
-        if (newProjectError) {
-            newProjectError.hidden =
-                true
-        }
-
-        newProjectSubmit.disabled =
-            true
-
-        newProjectSubmit.textContent =
-            'Creating...'
-
-        try {
-            const response =
-                await fetch(
-                    '/projects',
-                    {
-                        method: 'POST',
-
-                        headers: {
-                            'Content-Type':
-                                'application/json',
-
-                            'Accept':
-                                'application/json',
-
-                            'X-CSRF-TOKEN':
-                                csrfToken,
-                        },
-
-                        body:
-                            JSON.stringify(
-                                projectData
-                            ),
-                    }
+            const formData =
+                new FormData(
+                    newProjectForm
                 )
 
-            const data =
-                await response.json()
 
-            if (!response.ok) {
-                const validationErrors =
-                    data.errors
-                        ? Object.values(
-                            data.errors
+            const projectData = {
+
+                title:
+                    formData.get(
+                        'title'
+                    ),
+
+                client_id:
+                    Number(
+                        formData.get(
+                            'client_id'
                         )
-                            .flat()
-                            .join(' ')
-                        : null
+                    ),
 
-                throw new Error(
-                    validationErrors ||
-                    data.message ||
-                    'Could not create project.'
-                )
+                status:
+                    formData.get(
+                        'status'
+                    ),
+
+                deadline:
+                    formData.get(
+                        'deadline'
+                    ) || null,
+
+                progress:
+                    Number(
+                        formData.get(
+                            'progress'
+                        )
+                    ),
             }
 
-            window.location.reload()
-
-        } catch (error) {
-            console.error(error)
 
             if (newProjectError) {
-                newProjectError
-                    .textContent =
-                    error.message
 
                 newProjectError.hidden =
-                    false
+                    true
             }
 
-        } finally {
+
             newProjectSubmit.disabled =
-                false
+                true
+
 
             newProjectSubmit.textContent =
-                'Create project'
+                'Creating...'
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        '/projects',
+                        {
+                            method:
+                                'POST',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json',
+
+                                'Accept':
+                                    'application/json',
+
+                                'X-CSRF-TOKEN':
+                                    csrfToken,
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    projectData
+                                ),
+                        }
+                    )
+
+
+                const data =
+                    await response
+                        .json()
+
+
+                if (!response.ok) {
+
+                    const validationErrors =
+                        data.errors
+                            ? Object
+                                .values(
+                                    data.errors
+                                )
+                                .flat()
+                                .join(' ')
+                            : null
+
+
+                    throw new Error(
+                        validationErrors ||
+                        data.message ||
+                        'Could not create project.'
+                    )
+                }
+
+
+                window.location.reload()
+
+            } catch (error) {
+
+                console.error(
+                    error
+                )
+
+
+                if (newProjectError) {
+
+                    newProjectError
+                        .textContent =
+                        error.message
+
+                    newProjectError.hidden =
+                        false
+                }
+
+            } finally {
+
+                newProjectSubmit.disabled =
+                    false
+
+                newProjectSubmit.textContent =
+                    'Create project'
+            }
         }
-    }
-)
+    )
 
 
 /* =========================================================
@@ -1410,209 +2082,275 @@ const clientColorValue =
 
 
 function openClientModal() {
-    clientModal?.classList.add(
-        'is-open'
-    )
 
-    clientModalBackdrop?.classList.add(
-        'is-open'
-    )
-
-    clientModal?.setAttribute(
-        'aria-hidden',
-        'false'
-    )
-
-    const nameInput =
-        addClientForm?.querySelector(
-            '[name="name"]'
+    clientModal
+        ?.classList
+        .add(
+            'is-open'
         )
 
+
+    clientModalBackdrop
+        ?.classList
+        .add(
+            'is-open'
+        )
+
+
+    clientModal
+        ?.setAttribute(
+            'aria-hidden',
+            'false'
+        )
+
+
+    const nameInput =
+        addClientForm
+            ?.querySelector(
+                '[name="name"]'
+            )
+
+
     setTimeout(() => {
-        nameInput?.focus()
+
+        nameInput
+            ?.focus()
+
     }, 100)
 }
 
 
 function closeClientModal() {
-    clientModal?.classList.remove(
-        'is-open'
-    )
 
-    clientModalBackdrop?.classList.remove(
-        'is-open'
-    )
+    clientModal
+        ?.classList
+        .remove(
+            'is-open'
+        )
 
-    clientModal?.setAttribute(
-        'aria-hidden',
-        'true'
-    )
+
+    clientModalBackdrop
+        ?.classList
+        .remove(
+            'is-open'
+        )
+
+
+    clientModal
+        ?.setAttribute(
+            'aria-hidden',
+            'true'
+        )
+
 
     if (addClientError) {
-        addClientError.hidden = true
-        addClientError.textContent = ''
+
+        addClientError.hidden =
+            true
+
+        addClientError.textContent =
+            ''
     }
 }
 
 
-addClientButton?.addEventListener(
-    'click',
-    openClientModal
-)
-
-closeClientModalButton?.addEventListener(
-    'click',
-    closeClientModal
-)
-
-cancelClientButton?.addEventListener(
-    'click',
-    closeClientModal
-)
-
-clientModalBackdrop?.addEventListener(
-    'click',
-    closeClientModal
-)
+addClientButton
+    ?.addEventListener(
+        'click',
+        openClientModal
+    )
 
 
-clientColor?.addEventListener(
-    'input',
-    (event) => {
-        if (clientColorValue) {
-            clientColorValue.textContent =
-                event.target.value
+closeClientModalButton
+    ?.addEventListener(
+        'click',
+        closeClientModal
+    )
+
+
+cancelClientButton
+    ?.addEventListener(
+        'click',
+        closeClientModal
+    )
+
+
+clientModalBackdrop
+    ?.addEventListener(
+        'click',
+        closeClientModal
+    )
+
+
+clientColor
+    ?.addEventListener(
+        'input',
+        (event) => {
+
+            if (clientColorValue) {
+
+                clientColorValue
+                    .textContent =
+                    event.target.value
+            }
         }
-    }
-)
+    )
 
 
-addClientForm?.addEventListener(
-    'submit',
-    async (event) => {
-        event.preventDefault()
+addClientForm
+    ?.addEventListener(
+        'submit',
+        async (event) => {
 
-        const formData =
-            new FormData(
-                addClientForm
-            )
+            event.preventDefault()
 
-        const clientData = {
-            name:
-                formData.get('name'),
 
-            type:
-                formData.get('type') ||
-                null,
-
-            location:
-                formData.get(
-                    'location'
-                ) || null,
-
-            description:
-                formData.get(
-                    'description'
-                ) || null,
-
-            contact_name:
-                formData.get(
-                    'contact_name'
-                ) || null,
-
-            contact_email:
-                formData.get(
-                    'contact_email'
-                ) || null,
-
-            accent_color:
-                formData.get(
-                    'accent_color'
-                ),
-        }
-
-        if (addClientError) {
-            addClientError.hidden =
-                true
-        }
-
-        addClientSubmit.disabled =
-            true
-
-        addClientSubmit.textContent =
-            'Adding...'
-
-        try {
-            const response =
-                await fetch(
-                    '/clients',
-                    {
-                        method: 'POST',
-
-                        headers: {
-                            'Content-Type':
-                                'application/json',
-
-                            'Accept':
-                                'application/json',
-
-                            'X-CSRF-TOKEN':
-                                csrfToken,
-                        },
-
-                        body:
-                            JSON.stringify(
-                                clientData
-                            ),
-                    }
+            const formData =
+                new FormData(
+                    addClientForm
                 )
 
-            const data =
-                await response.json()
 
-            if (!response.ok) {
-                const validationErrors =
-                    data.errors
-                        ? Object.values(
-                            data.errors
-                        )
-                            .flat()
-                            .join(' ')
-                        : null
+            const clientData = {
 
-                throw new Error(
-                    validationErrors ||
-                    data.message ||
-                    'Could not create client.'
-                )
+                name:
+                    formData.get(
+                        'name'
+                    ),
+
+                type:
+                    formData.get(
+                        'type'
+                    ) || null,
+
+                location:
+                    formData.get(
+                        'location'
+                    ) || null,
+
+                description:
+                    formData.get(
+                        'description'
+                    ) || null,
+
+                contact_name:
+                    formData.get(
+                        'contact_name'
+                    ) || null,
+
+                contact_email:
+                    formData.get(
+                        'contact_email'
+                    ) || null,
+
+                accent_color:
+                    formData.get(
+                        'accent_color'
+                    ),
             }
 
-            window.location.href =
-                `/?client=${encodeURIComponent(
-                    data.client.slug
-                )}`
-
-        } catch (error) {
-            console.error(error)
 
             if (addClientError) {
-                addClientError
-                    .textContent =
-                    error.message
 
                 addClientError.hidden =
-                    false
+                    true
             }
 
-        } finally {
+
             addClientSubmit.disabled =
-                false
+                true
+
 
             addClientSubmit.textContent =
-                'Add client'
+                'Adding...'
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        '/clients',
+                        {
+                            method:
+                                'POST',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json',
+
+                                'Accept':
+                                    'application/json',
+
+                                'X-CSRF-TOKEN':
+                                    csrfToken,
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    clientData
+                                ),
+                        }
+                    )
+
+
+                const data =
+                    await response
+                        .json()
+
+
+                if (!response.ok) {
+
+                    const validationErrors =
+                        data.errors
+                            ? Object
+                                .values(
+                                    data.errors
+                                )
+                                .flat()
+                                .join(' ')
+                            : null
+
+
+                    throw new Error(
+                        validationErrors ||
+                        data.message ||
+                        'Could not create client.'
+                    )
+                }
+
+
+                window.location.href =
+                    `/?client=${encodeURIComponent(
+                        data.client.slug
+                    )}`
+
+            } catch (error) {
+
+                console.error(
+                    error
+                )
+
+
+                if (addClientError) {
+
+                    addClientError
+                        .textContent =
+                        error.message
+
+                    addClientError.hidden =
+                        false
+                }
+
+            } finally {
+
+                addClientSubmit.disabled =
+                    false
+
+                addClientSubmit.textContent =
+                    'Add client'
+            }
         }
-    }
-)
+    )
 
 
 /* =========================================================
@@ -1622,9 +2360,16 @@ addClientForm?.addEventListener(
 document.addEventListener(
     'keydown',
     (event) => {
-        if (event.key === 'Escape') {
+
+        if (
+            event.key ===
+            'Escape'
+        ) {
+
             closeDrawer()
+
             closeNewProjectModal()
+
             closeClientModal()
         }
     }
@@ -1640,74 +2385,103 @@ const mascot =
         '[data-brand-mascot]'
     )
 
+
 if (mascot) {
+
     const eyes =
         mascot.querySelectorAll(
             '.mascot-eye'
         )
 
+
     window.addEventListener(
         'mousemove',
         (event) => {
-            eyes.forEach((eye) => {
-                const pupil =
-                    eye.querySelector(
-                        '.mascot-pupil'
-                    )
 
-                if (!pupil) {
-                    return
+            eyes.forEach(
+                (eye) => {
+
+                    const pupil =
+                        eye.querySelector(
+                            '.mascot-pupil'
+                        )
+
+
+                    if (!pupil) {
+                        return
+                    }
+
+
+                    const rect =
+                        eye
+                            .getBoundingClientRect()
+
+
+                    const centerX =
+                        rect.left +
+                        rect.width / 2
+
+
+                    const centerY =
+                        rect.top +
+                        rect.height / 2
+
+
+                    const angle =
+                        Math.atan2(
+                            event.clientY -
+                                centerY,
+
+                            event.clientX -
+                                centerX
+                        )
+
+
+                    const distance =
+                        2
+
+
+                    const x =
+                        Math.cos(
+                            angle
+                        ) *
+                        distance
+
+
+                    const y =
+                        Math.sin(
+                            angle
+                        ) *
+                        distance
+
+
+                    pupil.style.transform =
+                        `translate(${x}px, ${y}px)`
                 }
-
-                const rect =
-                    eye.getBoundingClientRect()
-
-                const centerX =
-                    rect.left +
-                    rect.width / 2
-
-                const centerY =
-                    rect.top +
-                    rect.height / 2
-
-                const angle =
-                    Math.atan2(
-                        event.clientY -
-                            centerY,
-
-                        event.clientX -
-                            centerX
-                    )
-
-                const distance = 2
-
-                const x =
-                    Math.cos(angle) *
-                    distance
-
-                const y =
-                    Math.sin(angle) *
-                    distance
-
-                pupil.style.transform =
-                    `translate(${x}px, ${y}px)`
-            })
+            )
         }
     )
 
-    document.documentElement
+
+    document
+        .documentElement
         .addEventListener(
             'mouseleave',
             () => {
+
                 eyes.forEach(
                     (eye) => {
+
                         const pupil =
                             eye.querySelector(
                                 '.mascot-pupil'
                             )
 
+
                         if (pupil) {
-                            pupil.style
+
+                            pupil
+                                .style
                                 .transform =
                                 'translate(0, 0)'
                         }

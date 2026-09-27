@@ -136,6 +136,229 @@
 
         </div>
 
+        @if ($selectedClient)
+
+    <div
+        class="client-modal-backdrop"
+        data-edit-client-backdrop
+    ></div>
+
+
+    <div
+        class="client-modal"
+        data-edit-client-modal
+        aria-hidden="true"
+    >
+
+        <div class="client-modal__header">
+
+            <div>
+
+                <span class="client-modal__eyebrow">
+                    Client details
+                </span>
+
+                <h2>
+                    Edit {{ $selectedClient->name }}
+                </h2>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="client-modal__close"
+                data-close-edit-client
+                aria-label="Close edit client form"
+            >
+                ×
+            </button>
+
+            <button
+    type="button"
+    class="delete-client-button"
+    data-delete-client
+>
+    Delete client
+</button>
+
+        </div>
+
+
+<form
+    class="client-modal__form"
+    data-edit-client-form
+    data-client-id="{{ $selectedClient->id }}"
+    novalidate
+>
+
+            <label class="project-field">
+
+                <span>
+                    Client name
+                </span>
+
+                <input
+                    type="text"
+                    name="name"
+                    value="{{ $selectedClient->name }}"
+                    maxlength="255"
+                    required
+                >
+                <span
+    class="project-field__error"
+    data-edit-client-field-error="name"
+    hidden
+></span>
+</label>
+
+
+            <div class="project-modal__row">
+
+                <label class="project-field">
+
+                    <span>
+                        Type
+                    </span>
+
+                    <input
+                        type="text"
+                        name="type"
+                        value="{{ $selectedClient->type }}"
+                        placeholder="Non-profit, Company..."
+                    >
+
+                </label>
+
+
+                <label class="project-field">
+
+                    <span>
+                        Location
+                    </span>
+
+                    <input
+                        type="text"
+                        name="location"
+                        value="{{ $selectedClient->location }}"
+                        placeholder="Tilburg"
+                    >
+
+                </label>
+
+            </div>
+
+
+            <label class="project-field">
+
+                <span>
+                    Description
+                </span>
+
+                <textarea
+                    name="description"
+                    class="client-description-input"
+                    maxlength="1000"
+                    rows="4"
+                    placeholder="What does this client do?"
+                >{{ $selectedClient->description }}</textarea>
+
+            </label>
+
+
+            <div class="project-modal__row">
+
+                <label class="project-field">
+
+                    <span>
+                        Contact person
+                    </span>
+
+                    <input
+                        type="text"
+                        name="contact_name"
+                        value="{{ $selectedClient->contact_name }}"
+                        placeholder="Jan"
+                    >
+
+                </label>
+
+
+                <label class="project-field">
+
+                    <span>
+                        Email
+                    </span>
+
+                    <input
+                        type="email"
+                        name="contact_email"
+                        value="{{ $selectedClient->contact_email }}"
+                        placeholder="hello@example.nl"
+                    >
+</label>
+
+            </div>
+
+
+            <label class="project-field">
+
+                <span>
+                    Accent colour
+                </span>
+
+
+                <div class="client-color-field">
+
+                    <input
+                        type="color"
+                        name="accent_color"
+                        value="{{ $selectedClient->accent_color ?? '#d4a526' }}"
+                        data-edit-client-color
+                    >
+
+                    <span data-edit-client-color-value>
+                        {{ $selectedClient->accent_color ?? '#d4a526' }}
+                    </span>
+
+                </div>
+
+            </label>
+
+
+            <p
+                class="project-modal__error"
+                data-edit-client-error
+                hidden
+            ></p>
+
+
+            <div class="project-modal__actions">
+
+                <button
+                    type="button"
+                    class="project-modal__cancel"
+                    data-cancel-edit-client
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="project-modal__submit"
+                    data-submit-edit-client
+                >
+                    Save changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+@endif
+
         @if ($nextDeadline)
 
             <button
@@ -408,17 +631,24 @@
 
                     </div>
 
-                    <a
+<div class="client-overview__actions">
 
-                        href="/"
+    <button
+        type="button"
+        class="edit-client-button"
+        data-open-edit-client
+    >
+        Edit client
+    </button>
 
-                        class="back-to-clients"
+    <a
+        href="/"
+        class="back-to-clients"
+    >
+        Back to all clients
+    </a>
 
-                    >
-
-                        Back to all clients
-
-                    </a>
+</div>
 
                 </div>
 
@@ -674,6 +904,34 @@
 
                         @endforeach
 
+                        <div
+    class="workflow-column__empty"
+    @if (collect($projects)->where('status', $column['key'])->count() > 0)
+        hidden
+    @endif
+>
+<div class="workflow-empty-plant" aria-hidden="true">
+    <span class="workflow-empty-plant__z workflow-empty-plant__z--1">z</span>
+    <span class="workflow-empty-plant__z workflow-empty-plant__z--2">z</span>
+
+    <div class="workflow-empty-plant__sprout">
+        <span class="workflow-empty-plant__leaf workflow-empty-plant__leaf--left"></span>
+        <span class="workflow-empty-plant__leaf workflow-empty-plant__leaf--right"></span>
+        <span class="workflow-empty-plant__stem"></span>
+    </div>
+
+    <div class="workflow-empty-plant__pot"></div>
+</div>
+
+    <strong>
+        Nothing here yet
+    </strong>
+
+    <span>
+        Projects will appear here as they move through the workflow.
+    </span>
+</div>
+
                     </div>
 
                 </div>
@@ -745,6 +1003,7 @@
             class="client-modal__form"
 
             data-add-client-form
+            novalidate
 
         >
 
@@ -765,6 +1024,12 @@
                     required
 
                 >
+
+                <span
+                    class="project-field__error"
+                    data-add-client-field-error="name"
+                    hidden
+                ></span>
 
             </label>
 
@@ -855,6 +1120,12 @@
                         placeholder="hello@example.nl"
 
                     >
+
+                    <span
+                        class="project-field__error"
+                        data-add-client-field-error="contact_email"
+                        hidden
+                    ></span>
 
                 </label>
 
@@ -1122,13 +1393,11 @@
 
         </div>
 
-        <form
-
-            class="project-modal__form"
-
-            data-new-project-form
-
-        >
+<form
+    class="project-modal__form"
+    data-new-project-form
+    novalidate
+>
 
             <label class="project-field">
 
@@ -1153,6 +1422,12 @@
                     autofocus
 
                 >
+
+                <span
+    class="project-field__error"
+    data-new-project-field-error="title"
+    hidden
+></span>
 
             </label>
 
@@ -1203,6 +1478,12 @@
                     @endforeach
 
                 </select>
+
+                <span
+    class="project-field__error"
+    data-new-project-field-error="client_id"
+    hidden
+></span>
 
             </label>
 

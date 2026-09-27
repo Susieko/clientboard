@@ -168,6 +168,55 @@ const closeArchiveButton =
         '[data-close-archive]'
     )
 
+const openEditClientButton =
+    document.querySelector(
+        '[data-open-edit-client]'
+    )
+
+const editClientModal =
+    document.querySelector(
+        '[data-edit-client-modal]'
+    )
+
+const editClientBackdrop =
+    document.querySelector(
+        '[data-edit-client-backdrop]'
+    )
+
+const closeEditClientButton =
+    document.querySelector(
+        '[data-close-edit-client]'
+    )
+
+const cancelEditClientButton =
+    document.querySelector(
+        '[data-cancel-edit-client]'
+    )
+
+const editClientForm =
+    document.querySelector(
+        '[data-edit-client-form]'
+    )
+
+const editClientSubmit =
+    document.querySelector(
+        '[data-submit-edit-client]'
+    )
+
+const editClientError =
+    document.querySelector(
+        '[data-edit-client-error]'
+    )
+
+const editClientColor =
+    document.querySelector(
+        '[data-edit-client-color]'
+    )
+
+const editClientColorValue =
+    document.querySelector(
+        '[data-edit-client-color-value]'
+    )
 
 let activeProjectCard = null
 let drawerSaveTimer = null
@@ -326,6 +375,76 @@ drawerTitleInput
             }
         }
     )
+
+    const newProjectFieldErrors =
+    document.querySelectorAll(
+        '[data-new-project-field-error]'
+    )
+
+
+function clearNewProjectFieldErrors() {
+
+    newProjectFieldErrors.forEach(
+        (errorElement) => {
+
+            errorElement.hidden =
+                true
+
+            errorElement.textContent =
+                ''
+        }
+    )
+
+
+    newProjectForm
+        ?.querySelectorAll(
+            '.is-invalid'
+        )
+        .forEach(
+            (field) => {
+
+                field.classList.remove(
+                    'is-invalid'
+                )
+            }
+        )
+}
+
+
+function showNewProjectFieldError(
+    fieldName,
+    message
+) {
+
+    const field =
+        newProjectForm
+            ?.querySelector(
+                `[name="${fieldName}"]`
+            )
+
+
+    const errorElement =
+        document.querySelector(
+            `[data-new-project-field-error="${fieldName}"]`
+        )
+
+
+    field
+        ?.classList
+        .add(
+            'is-invalid'
+        )
+
+
+    if (errorElement) {
+
+        errorElement.textContent =
+            message
+
+        errorElement.hidden =
+            false
+    }
+}
 
 
 /* =========================================================
@@ -516,6 +635,349 @@ function updateProgressUI(value) {
     }
 }
 
+function openEditClientModal() {
+
+    editClientModal
+        ?.classList
+        .add('is-open')
+
+    editClientBackdrop
+        ?.classList
+        .add('is-open')
+
+    editClientModal
+        ?.setAttribute(
+            'aria-hidden',
+            'false'
+        )
+}
+
+
+function closeEditClientModal() {
+
+    editClientModal
+        ?.classList
+        .remove('is-open')
+
+    editClientBackdrop
+        ?.classList
+        .remove('is-open')
+
+    editClientModal
+        ?.setAttribute(
+            'aria-hidden',
+            'true'
+        )
+
+    if (editClientError) {
+
+        editClientError.hidden =
+            true
+
+        editClientError.textContent =
+            ''
+    }
+}
+
+
+openEditClientButton
+    ?.addEventListener(
+        'click',
+        openEditClientModal
+    )
+
+closeEditClientButton
+    ?.addEventListener(
+        'click',
+        closeEditClientModal
+    )
+
+cancelEditClientButton
+    ?.addEventListener(
+        'click',
+        closeEditClientModal
+    )
+
+editClientBackdrop
+    ?.addEventListener(
+        'click',
+        closeEditClientModal
+    )
+
+
+editClientColor
+    ?.addEventListener(
+        'input',
+        (event) => {
+
+            if (editClientColorValue) {
+
+                editClientColorValue.textContent =
+                    event.target.value
+            }
+        }
+    )
+
+editClientForm
+    ?.addEventListener(
+        'submit',
+        async (event) => {
+
+            event.preventDefault()
+
+
+            clearEditClientFieldErrors()
+
+
+            if (editClientError) {
+
+                editClientError.hidden =
+                    true
+
+                editClientError.textContent =
+                    ''
+            }
+
+
+            const clientId =
+                editClientForm
+                    .dataset
+                    .clientId
+
+
+            const formData =
+                new FormData(
+                    editClientForm
+                )
+
+
+            const name =
+                String(
+                    formData.get('name') || ''
+                ).trim()
+
+
+            const email =
+                String(
+                    formData.get(
+                        'contact_email'
+                    ) || ''
+                ).trim()
+
+
+            const emailPattern =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+
+            let hasErrors =
+                false
+
+
+            if (!name) {
+
+                showEditClientFieldError(
+                    'name',
+                    'Give the client a name.'
+                )
+
+                hasErrors =
+                    true
+            }
+
+
+            if (
+                email &&
+                !emailPattern.test(email)
+            ) {
+
+                showEditClientFieldError(
+                    'contact_email',
+                    'Enter a valid email address.'
+                )
+
+                hasErrors =
+                    true
+            }
+
+
+            if (hasErrors) {
+                return
+            }
+
+
+            const clientData = {
+
+                name,
+
+                type:
+                    formData.get('type') || null,
+
+                location:
+                    formData.get('location') || null,
+
+                description:
+                    formData.get('description') || null,
+
+                contact_name:
+                    formData.get('contact_name') || null,
+
+                contact_email:
+                    email || null,
+
+                accent_color:
+                    formData.get('accent_color'),
+            }
+
+
+            editClientSubmit.disabled =
+                true
+
+            editClientSubmit.textContent =
+                'Saving...'
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/clients/${clientId}`,
+                        {
+                            method:
+                                'PATCH',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json',
+
+                                'Accept':
+                                    'application/json',
+
+                                'X-CSRF-TOKEN':
+                                    csrfToken,
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    clientData
+                                ),
+                        }
+                    )
+
+
+                const data =
+                    await response.json()
+
+
+                if (!response.ok) {
+
+                    if (data.errors) {
+
+                        Object.entries(
+                            data.errors
+                        ).forEach(
+                            ([field, messages]) => {
+
+                                showEditClientFieldError(
+                                    field,
+                                    messages[0]
+                                )
+                            }
+                        )
+
+                        return
+                    }
+
+
+                    throw new Error(
+                        data.message ||
+                        'Could not update client.'
+                    )
+                }
+
+
+                editClientSubmit.textContent =
+                    'Saved ✓'
+
+
+                setTimeout(
+                    () => {
+
+                        window.location.reload()
+
+                    },
+                    450
+                )
+
+
+            } catch (error) {
+
+                console.error(
+                    error
+                )
+
+
+                if (editClientError) {
+
+                    editClientError.textContent =
+                        error.message
+
+                    editClientError.hidden =
+                        false
+                }
+
+
+            } finally {
+
+                editClientSubmit.disabled =
+                    false
+
+
+                if (
+                    editClientSubmit.textContent !==
+                    'Saved ✓'
+                ) {
+
+                    editClientSubmit.textContent =
+                        'Save changes'
+                }
+            }
+        }
+    )
+
+    editClientForm
+    ?.querySelectorAll(
+        'input, select, textarea'
+    )
+    .forEach(
+        (field) => {
+
+            field.addEventListener(
+                'input',
+                () => {
+
+                    field.classList.remove(
+                        'is-invalid'
+                    )
+
+
+                    const errorElement =
+                        document.querySelector(
+                            `[data-edit-client-field-error="${field.name}"]`
+                        )
+
+
+                    if (errorElement) {
+
+                        errorElement.hidden =
+                            true
+
+                        errorElement.textContent =
+                            ''
+                    }
+                }
+            )
+        }
+    )
 
 function updateColumnCounts() {
 
@@ -559,6 +1021,78 @@ function updateColumnCounts() {
             }
         })
 }
+
+const editClientFieldErrors =
+    document.querySelectorAll(
+        '[data-edit-client-field-error]'
+    )
+
+
+function clearEditClientFieldErrors() {
+
+    editClientFieldErrors.forEach(
+        (errorElement) => {
+
+            errorElement.hidden =
+                true
+
+            errorElement.textContent =
+                ''
+        }
+    )
+
+
+    editClientForm
+        ?.querySelectorAll(
+            '.is-invalid'
+        )
+        .forEach(
+            (field) => {
+
+                field.classList.remove(
+                    'is-invalid'
+                )
+            }
+        )
+}
+
+
+function showEditClientFieldError(
+    fieldName,
+    message
+) {
+
+    const field =
+        editClientForm
+            ?.querySelector(
+                `[name="${fieldName}"]`
+            )
+
+
+    const errorElement =
+        document.querySelector(
+            `[data-edit-client-field-error="${fieldName}"]`
+        )
+
+
+    field
+        ?.classList
+        .add(
+            'is-invalid'
+        )
+
+
+    if (errorElement) {
+
+        errorElement.textContent =
+            message
+
+        errorElement.hidden =
+            false
+    }
+}
+
+
 
 
 /* =========================================================
@@ -2151,24 +2685,73 @@ newProjectForm
             event.preventDefault()
 
 
+            clearNewProjectFieldErrors()
+
+
+            if (newProjectError) {
+                newProjectError.hidden = true
+                newProjectError.textContent = ''
+            }
+
+
             const formData =
                 new FormData(
                     newProjectForm
                 )
 
 
+            const title =
+                String(
+                    formData.get('title') || ''
+                ).trim()
+
+
+            const clientId =
+                formData.get(
+                    'client_id'
+                )
+
+
+            let hasErrors =
+                false
+
+
+            if (!title) {
+
+                showNewProjectFieldError(
+                    'title',
+                    'Give the project a name.'
+                )
+
+                hasErrors =
+                    true
+            }
+
+
+            if (!clientId) {
+
+                showNewProjectFieldError(
+                    'client_id',
+                    'Choose a client first.'
+                )
+
+                hasErrors =
+                    true
+            }
+
+
+            if (hasErrors) {
+                return
+            }
+
+
             const projectData = {
 
-                title:
-                    formData.get(
-                        'title'
-                    ),
+                title,
 
                 client_id:
                     Number(
-                        formData.get(
-                            'client_id'
-                        )
+                        clientId
                     ),
 
                 status:
@@ -2190,16 +2773,8 @@ newProjectForm
             }
 
 
-            if (newProjectError) {
-
-                newProjectError.hidden =
-                    true
-            }
-
-
             newProjectSubmit.disabled =
                 true
-
 
             newProjectSubmit.textContent =
                 'Creating...'
@@ -2234,32 +2809,47 @@ newProjectForm
 
 
                 const data =
-                    await response
-                        .json()
+                    await response.json()
 
 
                 if (!response.ok) {
 
-                    const validationErrors =
-                        data.errors
-                            ? Object
-                                .values(
-                                    data.errors
+                    if (data.errors) {
+
+                        Object.entries(
+                            data.errors
+                        ).forEach(
+                            ([field, messages]) => {
+
+                                showNewProjectFieldError(
+                                    field,
+                                    messages[0]
                                 )
-                                .flat()
-                                .join(' ')
-                            : null
+                            }
+                        )
+
+                        return
+                    }
 
 
                     throw new Error(
-                        validationErrors ||
                         data.message ||
                         'Could not create project.'
                     )
                 }
 
 
-                window.location.reload()
+                newProjectSubmit.textContent =
+                    'Created ✓'
+
+
+                setTimeout(
+                    () => {
+                        window.location.reload()
+                    },
+                    350
+                )
+
 
             } catch (error) {
 
@@ -2270,22 +2860,63 @@ newProjectForm
 
                 if (newProjectError) {
 
-                    newProjectError
-                        .textContent =
+                    newProjectError.textContent =
                         error.message
 
                     newProjectError.hidden =
                         false
                 }
 
+
             } finally {
 
                 newProjectSubmit.disabled =
                     false
 
-                newProjectSubmit.textContent =
-                    'Create project'
+                if (
+                    newProjectSubmit.textContent !==
+                    'Created ✓'
+                ) {
+
+                    newProjectSubmit.textContent =
+                        'Create project'
+                }
             }
+        }
+    )
+
+    newProjectForm
+    ?.querySelectorAll(
+        'input, select, textarea'
+    )
+    .forEach(
+        (field) => {
+
+            field.addEventListener(
+                'input',
+                () => {
+
+                    field.classList.remove(
+                        'is-invalid'
+                    )
+
+
+                    const errorElement =
+                        document.querySelector(
+                            `[data-new-project-field-error="${field.name}"]`
+                        )
+
+
+                    if (errorElement) {
+
+                        errorElement.hidden =
+                            true
+
+                        errorElement.textContent =
+                            ''
+                    }
+                }
+            )
         }
     )
 
@@ -2333,6 +2964,69 @@ const addClientError =
     document.querySelector(
         '[data-add-client-error]'
     )
+
+const addClientFieldErrors =
+    document.querySelectorAll(
+        '[data-add-client-field-error]'
+    )
+
+
+function clearAddClientFieldErrors() {
+
+    addClientFieldErrors.forEach(
+        (errorElement) => {
+
+            errorElement.hidden = true
+            errorElement.textContent = ''
+        }
+    )
+
+
+    addClientForm
+        ?.querySelectorAll('.is-invalid')
+        .forEach(
+            (field) => {
+
+                field.classList.remove(
+                    'is-invalid'
+                )
+            }
+        )
+}
+
+
+function showAddClientFieldError(
+    fieldName,
+    message
+) {
+
+    const field =
+        addClientForm
+            ?.querySelector(
+                `[name="${fieldName}"]`
+            )
+
+
+    const errorElement =
+        document.querySelector(
+            `[data-add-client-field-error="${fieldName}"]`
+        )
+
+
+    field
+        ?.classList
+        .add('is-invalid')
+
+
+    if (errorElement) {
+
+        errorElement.textContent =
+            message
+
+        errorElement.hidden =
+            false
+    }
+}
 
 const clientColor =
     document.querySelector(
@@ -2469,61 +3163,106 @@ addClientForm
             event.preventDefault()
 
 
+            clearAddClientFieldErrors()
+
+
+            if (addClientError) {
+                addClientError.hidden = true
+                addClientError.textContent = ''
+            }
+
+
             const formData =
                 new FormData(
                     addClientForm
                 )
 
 
-            const clientData = {
+            const name =
+                String(
+                    formData.get('name') || ''
+                ).trim()
 
-                name:
-                    formData.get(
-                        'name'
-                    ),
 
-                type:
-                    formData.get(
-                        'type'
-                    ) || null,
-
-                location:
-                    formData.get(
-                        'location'
-                    ) || null,
-
-                description:
-                    formData.get(
-                        'description'
-                    ) || null,
-
-                contact_name:
-                    formData.get(
-                        'contact_name'
-                    ) || null,
-
-                contact_email:
+            const email =
+                String(
                     formData.get(
                         'contact_email'
-                    ) || null,
+                    ) || ''
+                ).trim()
 
-                accent_color:
-                    formData.get(
-                        'accent_color'
-                    ),
+
+            let hasErrors =
+                false
+
+
+            if (!name) {
+
+                showAddClientFieldError(
+                    'name',
+                    'Give the client a name.'
+                )
+
+                hasErrors = true
             }
 
 
-            if (addClientError) {
+            const emailField =
+                addClientForm
+                    .querySelector(
+                        '[name="contact_email"]'
+                    )
 
-                addClientError.hidden =
-                    true
+
+const emailPattern =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+
+if (
+    email &&
+    !emailPattern.test(email)
+) {
+
+                showAddClientFieldError(
+                    'contact_email',
+                    'Enter a valid email address.'
+                )
+
+                hasErrors = true
+            }
+
+
+            if (hasErrors) {
+                return
+            }
+
+
+            const clientData = {
+
+                name,
+
+                type:
+                    formData.get('type') || null,
+
+                location:
+                    formData.get('location') || null,
+
+                description:
+                    formData.get('description') || null,
+
+                contact_name:
+                    formData.get('contact_name') || null,
+
+                contact_email:
+                    email || null,
+
+                accent_color:
+                    formData.get('accent_color'),
             }
 
 
             addClientSubmit.disabled =
                 true
-
 
             addClientSubmit.textContent =
                 'Adding...'
@@ -2535,8 +3274,7 @@ addClientForm
                     await fetch(
                         '/clients',
                         {
-                            method:
-                                'POST',
+                            method: 'POST',
 
                             headers: {
                                 'Content-Type':
@@ -2558,61 +3296,118 @@ addClientForm
 
 
                 const data =
-                    await response
-                        .json()
+                    await response.json()
 
 
                 if (!response.ok) {
 
-                    const validationErrors =
-                        data.errors
-                            ? Object
-                                .values(
-                                    data.errors
+                    if (data.errors) {
+
+                        Object.entries(
+                            data.errors
+                        ).forEach(
+                            ([field, messages]) => {
+
+                                showAddClientFieldError(
+                                    field,
+                                    messages[0]
                                 )
-                                .flat()
-                                .join(' ')
-                            : null
+                            }
+                        )
+
+                        return
+                    }
 
 
                     throw new Error(
-                        validationErrors ||
                         data.message ||
                         'Could not create client.'
                     )
                 }
 
 
-                window.location.href =
-                    `/?client=${encodeURIComponent(
-                        data.client.slug
-                    )}`
+                addClientSubmit.textContent =
+                    'Added ✓'
+
+
+                setTimeout(
+                    () => {
+
+                        window.location.href =
+                            `/?client=${encodeURIComponent(
+                                data.client.slug
+                            )}`
+
+                    },
+                    350
+                )
+
 
             } catch (error) {
 
-                console.error(
-                    error
-                )
+                console.error(error)
 
 
                 if (addClientError) {
 
-                    addClientError
-                        .textContent =
+                    addClientError.textContent =
                         error.message
 
                     addClientError.hidden =
                         false
                 }
 
+
             } finally {
 
                 addClientSubmit.disabled =
                     false
 
-                addClientSubmit.textContent =
-                    'Add client'
+
+                if (
+                    addClientSubmit.textContent !==
+                    'Added ✓'
+                ) {
+
+                    addClientSubmit.textContent =
+                        'Add client'
+                }
             }
+        }
+    )
+
+    addClientForm
+    ?.querySelectorAll(
+        'input, select, textarea'
+    )
+    .forEach(
+        (field) => {
+
+            field.addEventListener(
+                'input',
+                () => {
+
+                    field.classList.remove(
+                        'is-invalid'
+                    )
+
+
+                    const errorElement =
+                        document.querySelector(
+                            `[data-add-client-field-error="${field.name}"]`
+                        )
+
+
+                    if (errorElement) {
+
+                        errorElement.hidden =
+                            true
+
+                        errorElement.textContent =
+                            ''
+                    }
+                }
+            )
         }
     )
 
@@ -2637,6 +3432,8 @@ document.addEventListener(
             closeClientModal()
 
             closeArchiveModal()
+
+            closeEditClientModal()
         }
     }
 )
@@ -3073,3 +3870,200 @@ archiveConfirmButton
             }
         }
     )
+
+/* =========================================================
+   DELETE CLIENT
+   ========================================================= */
+
+let deleteClientConfirmTimer =
+    null
+
+
+document.addEventListener(
+    'click',
+    async (event) => {
+
+        const button =
+            event.target.closest(
+                '[data-delete-client]'
+            )
+
+
+        if (!button) {
+            return
+        }
+
+
+        if (!editClientForm) {
+
+            console.error(
+                'Edit client form not found.'
+            )
+
+            return
+        }
+
+
+        const clientId =
+            editClientForm
+                .dataset
+                .clientId
+
+
+        if (!clientId) {
+
+            console.error(
+                'Client ID not found.'
+            )
+
+            return
+        }
+
+
+        /*
+         * FIRST CLICK
+         * Ask for confirmation
+         */
+
+        if (
+            !button
+                .classList
+                .contains(
+                    'is-confirming'
+                )
+        ) {
+
+            button
+                .classList
+                .add(
+                    'is-confirming'
+                )
+
+
+            button.textContent =
+                'Delete forever?'
+
+
+            clearTimeout(
+                deleteClientConfirmTimer
+            )
+
+
+            deleteClientConfirmTimer =
+                setTimeout(
+                    () => {
+
+                        button
+                            .classList
+                            .remove(
+                                'is-confirming'
+                            )
+
+
+                        button.textContent =
+                            'Delete client'
+
+                    },
+                    3500
+                )
+
+
+            return
+        }
+
+
+        /*
+         * SECOND CLICK
+         * Actually delete
+         */
+
+        clearTimeout(
+            deleteClientConfirmTimer
+        )
+
+
+        button.disabled =
+            true
+
+
+        button.textContent =
+            'Deleting...'
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/clients/${clientId}`,
+                    {
+                        method:
+                            'DELETE',
+
+                        headers: {
+                            'Accept':
+                                'application/json',
+
+                            'X-CSRF-TOKEN':
+                                csrfToken,
+                        },
+                    }
+                )
+
+
+            const data =
+                await response.json()
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    'Could not delete client.'
+                )
+            }
+
+
+            button.textContent =
+                'Deleted ✓'
+
+
+            setTimeout(
+                () => {
+
+                    window.location.href =
+                        '/'
+
+                },
+                350
+            )
+
+
+        } catch (error) {
+
+            console.error(
+                error
+            )
+
+
+            button.disabled =
+                false
+
+
+            button
+                .classList
+                .remove(
+                    'is-confirming'
+                )
+
+
+            button.textContent =
+                'Delete client'
+
+
+            alert(
+                error.message ||
+                'Client could not be deleted.'
+            )
+        }
+    }
+)

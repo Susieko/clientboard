@@ -298,3 +298,13 @@ Route::delete(
     '/projects/{project}',
     [ProjectController::class, 'destroy']
 )->name('projects.destroy');
+
+Route::patch(
+    '/clients/{client}',
+    [ClientController::class, 'update']
+)->name('clients.update');
+
+Route::delete(
+    '/clients/{client}',
+    [ClientController::class, 'destroy']
+)->name('clients.destroy');

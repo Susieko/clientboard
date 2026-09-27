@@ -6557,3 +6557,87 @@ both normally and during the happy animation.
             center;
     }
 }
+
+/* =========================================================
+   ACCESSIBILITY
+   KEYBOARD FOCUS
+   ========================================================= */
+
+a:focus-visible,
+button:focus-visible,
+[role='button']:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline:
+        3px solid
+        rgba(212, 165, 38, 0.8);
+
+    outline-offset:
+        3px;
+}
+
+
+/* Keep project cards looking intentional with keyboard focus */
+
+.project-card:focus-visible {
+    border-color:
+        rgba(212, 165, 38, 0.55);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(212, 165, 38, 0.1);
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior:
+            auto !important;
+
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            0.01ms !important;
+
+        transition-delay:
+            0ms !important;
+    }
+
+    .project-drawer,
+    .project-modal,
+    .client-modal,
+    .archive-modal {
+        transform:
+            none;
+    }
+
+    .project-drawer {
+        transform:
+            translateX(100%);
+    }
+
+    .project-drawer.is-open {
+        transform:
+            translateX(0);
+    }
+
+    .project-modal,
+    .client-modal,
+    .archive-modal {
+        transform:
+            translate(-50%, -50%);
+    }
+}

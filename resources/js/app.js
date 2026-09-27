@@ -3411,6 +3411,31 @@ if (
         }
     )
 
+    const interactivePanels = [
+    drawer,
+    newProjectModal,
+    clientModal,
+    archiveModal,
+    editClientModal,
+]
+
+
+interactivePanels.forEach(
+    (panel) => {
+
+        if (
+            panel &&
+            !panel.classList.contains(
+                'is-open'
+            )
+        ) {
+
+            panel.inert =
+                true
+        }
+    }
+)
+
 
 /* =========================================================
    ESCAPE KEY
@@ -4065,5 +4090,83 @@ document.addEventListener(
                 'Client could not be deleted.'
             )
         }
+    }
+)
+
+/* =========================================================
+   ACCESSIBILITY
+   KEEP CLOSED PANELS OUT OF TAB ORDER
+   ========================================================= */
+
+const focusManagedPanels = [
+    drawer,
+    newProjectModal,
+    clientModal,
+    archiveModal,
+    editClientModal,
+].filter(Boolean)
+
+
+function syncPanelAccessibility(panel) {
+
+    const isOpen =
+        panel.classList.contains(
+            'is-open'
+        )
+
+
+    panel.inert =
+        !isOpen
+
+
+    panel.setAttribute(
+        'aria-hidden',
+        isOpen
+            ? 'false'
+            : 'true'
+    )
+}
+
+
+focusManagedPanels.forEach(
+    (panel) => {
+
+        /*
+         * Set the correct state immediately
+         * when the page loads.
+         */
+
+        syncPanelAccessibility(
+            panel
+        )
+
+
+        /*
+         * Watch for our existing JS adding
+         * or removing the is-open class.
+         */
+
+        const observer =
+            new MutationObserver(
+                () => {
+
+                    syncPanelAccessibility(
+                        panel
+                    )
+                }
+            )
+
+
+        observer.observe(
+            panel,
+            {
+                attributes:
+                    true,
+
+                attributeFilter: [
+                    'class',
+                ],
+            }
+        )
     }
 )

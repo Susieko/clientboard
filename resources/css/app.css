@@ -5910,3 +5910,650 @@ both normally and during the happy animation.
 
     color: #e28898;
 }
+
+/* =========================================================
+   FINAL RESPONSIVE PASS
+   GLOBAL / HEADER / INTRO / CLIENT TOOLBAR
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+    .app-shell {
+        width:
+            calc(100% - 32px);
+    }
+
+
+    /* HEADER */
+
+    .topbar {
+        min-height: 76px;
+        gap: 16px;
+    }
+
+    .brand {
+        gap: 9px;
+
+        font-size: 15px;
+    }
+
+    .brand-mascot {
+        width: 38px;
+        height: 38px;
+    }
+
+    .new-project-button {
+        min-height: 40px;
+
+        padding:
+            0 14px;
+
+        font-size: 12px;
+    }
+
+
+    /* INTRO */
+
+    .dashboard-intro {
+        grid-template-columns:
+            1fr;
+
+        align-items:
+            stretch;
+
+        gap: 24px;
+
+        padding:
+            42px 0 24px;
+    }
+
+    .intro-copy {
+        max-width:
+            none;
+    }
+
+    .intro-copy h1 {
+        font-size:
+            clamp(
+                42px,
+                12vw,
+                60px
+            );
+
+        line-height:
+            0.98;
+    }
+
+    .intro-copy p {
+        margin-top:
+            18px;
+
+        font-size:
+            14px;
+    }
+
+
+    /* DEADLINE */
+
+    .deadline-widget {
+        width:
+            100%;
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            66px;
+
+        gap:
+            14px;
+
+        padding:
+            15px 16px;
+    }
+
+
+    /* CLIENT TOOLBAR */
+
+    .client-toolbar {
+        align-items:
+            stretch;
+
+        flex-direction:
+            column;
+
+        gap:
+            14px;
+
+        padding:
+            18px 0 28px;
+    }
+
+    .client-filters {
+        width:
+            100%;
+
+        flex-wrap:
+            nowrap;
+
+        overflow-x:
+            auto;
+
+        padding-bottom:
+            4px;
+
+        scrollbar-width:
+            none;
+    }
+
+    .client-filters::-webkit-scrollbar {
+        display:
+            none;
+    }
+
+    .client-filter {
+        flex-shrink:
+            0;
+    }
+
+    .archived-projects-button,
+    .add-client-button {
+        justify-content:
+            center;
+    }
+}
+
+@media (max-width: 430px) {
+
+    .app-shell {
+        width:
+            calc(100% - 24px);
+    }
+
+
+    .topbar {
+        min-height:
+            70px;
+    }
+
+    .brand > span:last-child {
+        display:
+            none;
+    }
+
+    .new-project-button {
+        padding:
+            0 13px;
+    }
+
+
+    .dashboard-intro {
+        padding-top:
+            32px;
+    }
+
+    .intro-copy h1 {
+        font-size:
+            clamp(
+                38px,
+                13vw,
+                50px
+            );
+    }
+
+
+    .deadline-widget {
+        grid-template-columns:
+            minmax(0, 1fr)
+            58px;
+
+        border-radius:
+            16px;
+    }
+}
+
+/* =========================================================
+   FINAL RESPONSIVE PASS
+   CLIENT OVERVIEW + KANBAN
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+    /* SELECTED CLIENT */
+
+    .client-overview {
+        padding-top:
+            14px;
+    }
+
+    .client-overview__content {
+        grid-template-columns:
+            1fr;
+
+        min-height:
+            0;
+
+        border-radius:
+            22px;
+    }
+
+    .client-overview__info {
+        padding:
+            24px;
+    }
+
+    .client-overview h2 {
+        font-size:
+            clamp(
+                34px,
+                10vw,
+                46px
+            );
+    }
+
+    .client-description {
+        max-width:
+            none;
+    }
+
+    .client-meta {
+        gap:
+            7px;
+    }
+
+    .client-overview__visual,
+    .client-overview__visual .client-landscape {
+        min-height:
+            220px;
+    }
+
+    .client-overview__actions {
+        display:
+            flex;
+
+        flex-wrap:
+            wrap;
+
+        gap:
+            9px;
+    }
+
+
+    /* WORKFLOW */
+
+    .project-workflow {
+        padding:
+            52px 0 72px;
+    }
+
+    .workflow-heading {
+        align-items:
+            center;
+
+        gap:
+            16px;
+
+        margin-bottom:
+            20px;
+    }
+
+    .workflow-heading h2 {
+        font-size:
+            32px;
+    }
+
+    .workflow-grid {
+        gap:
+            14px;
+    }
+
+    .workflow-column {
+        padding:
+            13px;
+
+        border-radius:
+            19px;
+    }
+
+    .project-card {
+        padding:
+            16px;
+    }
+}
+
+@media (max-width: 430px) {
+
+    /* CLIENT */
+
+    .client-overview__info {
+        padding:
+            20px;
+    }
+
+    .client-overview__identity {
+        align-items:
+            flex-start;
+    }
+
+    .client-meta span {
+        padding:
+            6px 9px;
+
+        font-size:
+            10px;
+    }
+
+    .client-overview__actions {
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+    }
+
+    .edit-client-button,
+    .back-to-clients {
+        width:
+            100%;
+
+        justify-content:
+            center;
+
+        text-align:
+            center;
+    }
+
+    .client-overview__visual,
+    .client-overview__visual .client-landscape {
+        min-height:
+            190px;
+    }
+
+
+    /* KANBAN */
+
+    .project-workflow {
+        padding-top:
+            44px;
+    }
+
+    .workflow-heading {
+        align-items:
+            flex-end;
+    }
+
+    .workflow-heading h2 {
+        font-size:
+            30px;
+    }
+
+    .workflow-count {
+        font-size:
+            12px;
+    }
+
+    .workflow-column {
+        padding:
+            12px;
+    }
+
+    .workflow-column__header {
+        padding:
+            3px 3px 12px;
+    }
+
+    .project-card h4 {
+        margin:
+            13px 0 20px;
+    }
+}
+
+/* =========================================================
+   FINAL RESPONSIVE PASS
+   DRAWER + MODALS
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+    /* PROJECT DRAWER */
+
+    .project-drawer {
+        width: 100%;
+        height: 100dvh;
+
+        border-left: 0;
+    }
+
+    .project-drawer__visual {
+        height: 155px;
+    }
+
+    .project-drawer__visual .client-landscape {
+        min-height: 155px;
+    }
+
+    .project-drawer__content {
+        padding: 20px;
+    }
+
+    .project-drawer h2 {
+        font-size: 25px;
+    }
+
+
+    /* NEW PROJECT + CLIENT MODALS */
+
+    .project-modal,
+    .client-modal {
+        width:
+            calc(100vw - 24px);
+
+        max-height:
+            calc(100dvh - 24px);
+
+        overflow-y:
+            auto;
+
+        padding:
+            22px;
+
+        border-radius:
+            20px;
+    }
+
+    .project-modal__header,
+    .client-modal__header {
+        margin-bottom:
+            22px;
+    }
+
+    .project-modal__header h2,
+    .client-modal__header h2 {
+        font-size:
+            23px;
+    }
+
+
+    /* ARCHIVE MODAL */
+
+    .archive-modal {
+        width:
+            calc(100vw - 24px);
+
+        max-height:
+            calc(100dvh - 24px);
+    }
+
+    .archive-modal__body {
+        max-height:
+            calc(100dvh - 110px);
+    }
+}
+
+@media (max-width: 430px) {
+
+    /* DRAWER */
+
+    .project-drawer__visual {
+        height:
+            135px;
+    }
+
+    .project-drawer__visual .client-landscape {
+        min-height:
+            135px;
+    }
+
+    .project-drawer__content {
+        padding:
+            18px;
+    }
+
+    .drawer-status-grid {
+        gap:
+            7px;
+    }
+
+    .drawer-status-button {
+        min-height:
+            40px;
+
+        padding:
+            9px 10px;
+
+        font-size:
+            11px;
+    }
+
+    .drawer-note-form {
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto;
+    }
+
+    .drawer-note-add {
+        padding:
+            0 14px;
+    }
+
+
+    /* PROJECT + CLIENT MODALS */
+
+    .project-modal,
+    .client-modal {
+        width:
+            calc(100vw - 20px);
+
+        max-height:
+            calc(100dvh - 20px);
+
+        padding:
+            18px;
+
+        border-radius:
+            18px;
+    }
+
+    .project-modal__row {
+        grid-template-columns:
+            1fr;
+    }
+
+    .project-modal__header,
+    .client-modal__header {
+        gap:
+            12px;
+
+        margin-bottom:
+            20px;
+    }
+
+    .project-modal__header h2,
+    .client-modal__header h2 {
+        font-size:
+            21px;
+    }
+
+    .project-modal__actions {
+        display:
+            grid;
+
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+    .project-modal__cancel,
+    .project-modal__submit {
+        width:
+            100%;
+    }
+
+
+    /* EDIT CLIENT HEADER */
+
+    .client-modal__header {
+        flex-wrap:
+            wrap;
+    }
+
+    .delete-client-button {
+        order:
+            3;
+
+        width:
+            100%;
+
+        margin-right:
+            0;
+
+        text-align:
+            center;
+    }
+
+
+    /* ARCHIVED PROJECTS */
+
+    .archive-modal {
+        width:
+            calc(100vw - 20px);
+
+        border-radius:
+            18px;
+    }
+
+    .archive-modal__header {
+        padding:
+            17px 18px;
+    }
+
+    .archive-modal__body {
+        padding:
+            12px;
+
+        max-height:
+            calc(100dvh - 95px);
+    }
+
+    .archive-project {
+        grid-template-columns:
+            1fr;
+
+        gap:
+            13px;
+
+        padding:
+            15px 15px 15px 18px;
+    }
+
+    .archive-project__actions {
+        width:
+            100%;
+    }
+
+    .archive-project__restore,
+    .archive-project__delete {
+        flex:
+            1;
+
+        text-align:
+            center;
+    }
+}

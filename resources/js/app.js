@@ -148,6 +148,9 @@ const csrfToken =
         'meta[name="csrf-token"]'
     )?.content
 
+const emailPattern =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 const openArchiveButton =
     document.querySelector(
         '[data-open-archive]'
@@ -763,11 +766,6 @@ editClientForm
                         'contact_email'
                     ) || ''
                 ).trim()
-
-
-            const emailPattern =
-                /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
 
             let hasErrors =
                 false
@@ -3206,18 +3204,6 @@ addClientForm
                 hasErrors = true
             }
 
-
-            const emailField =
-                addClientForm
-                    .querySelector(
-                        '[name="contact_email"]'
-                    )
-
-
-const emailPattern =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-
 if (
     email &&
     !emailPattern.test(email)
@@ -3414,27 +3400,7 @@ if (
     const interactivePanels = [
     drawer,
     newProjectModal,
-    clientModal,
-    archiveModal,
-    editClientModal,
-]
-
-
-interactivePanels.forEach(
-    (panel) => {
-
-        if (
-            panel &&
-            !panel.classList.contains(
-                'is-open'
-            )
-        ) {
-
-            panel.inert =
-                true
-        }
-    }
-)
+    ]
 
 
 /* =========================================================

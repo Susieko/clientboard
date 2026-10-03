@@ -1,12 +1,15 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
-    "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": [
-        "laravel",
-        "framework"
-    ],
+"name": "susieko/clientboard",
+"type": "project",
+"description": "A playful client and project management dashboard built with Laravel.",
+"keywords": [
+    "laravel",
+    "client-management",
+    "project-management",
+    "dashboard",
+    "portfolio"
+],
     "license": "MIT",
     "require": {
         "php": "^8.3",

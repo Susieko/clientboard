@@ -36,7 +36,7 @@ Clientboard started as a learning project to get more comfortable with Laravel a
 - PHP
 - Blade
 - JavaScript
-- CSS
+- Tailwind CSS
 - MySQL
 - Vite
 - Git

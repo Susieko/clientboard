@@ -6,15 +6,15 @@ Clientboard started as a learning project to get more comfortable with Laravel a
 
 ## Preview
 
-![Clientboard dashboard](./docs/dashboard.png)
+![Clientboard dashboard](./docs/images/dashboard.png)
 
 ### Project management
 
-![Clientboard project detail drawer](./docs/project-drawer.png)
+![Clientboard project detail drawer](./docs/images/project-drawer.png)
 
 ### Responsive design
 
-![Clientboard mobile view](./docs/mobile.png)
+![Clientboard mobile view](./docs/images/mobile.png)
 
 ## Features
 

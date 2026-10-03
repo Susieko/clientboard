@@ -1,111 +1,68 @@
 # Clientboard
 
-A visual client and project management dashboard built with Laravel.
+A playful client and project management dashboard built with Laravel.
 
-Clientboard started as a practice project for learning Laravel, but grew into a fully interactive dashboard for managing clients, projects, deadlines, progress, notes and project status.
+Clientboard started as a learning project to get more comfortable with Laravel and full-stack development while keeping the interface visually creative. The goal was to build something useful rather than a standard admin dashboard: a small workspace for managing clients, projects, progress and deadlines.
 
-The project focuses heavily on frontend polish and interaction design while still using a proper Laravel backend and database structure.
+## Preview
 
----
+![Clientboard dashboard](./docs/dashboard.png)
 
-## ✨ Features
+### Project management
 
-- Client filtering and individual client dashboards
-- Kanban-style project workflow
-- Project status management
-- Progress tracking
-- Editable deadlines
-- Project notes
-- Client reassignment
-- Editable project titles
-- Create and edit clients
-- Archive and restore projects
-- Permanently delete archived projects
-- Dynamic next-deadline widget
-- Custom visual identity for different clients
-- Responsive mobile layout
-- Keyboard navigation
-- Reduced-motion support
-- Interactive animated mascot
-
----
-
-## 🛠 Tech stack
-
-**Backend**
-- Laravel
-- PHP
-- SQLite
-- Eloquent ORM
-
-**Frontend**
-- Blade
-- JavaScript
-- CSS
-- Tailwind CSS
-- Vite
-
----
-
-## 🎨 Design
-
-Clientboard uses a dark purple interface with warm yellow accents and custom animated illustrations.
-
-Each client can have its own visual identity while still fitting into the overall Clientboard design system.
-
-The interface includes:
-
-- Animated client illustrations
-- Interactive hover states
-- Custom empty states
-- Responsive Kanban layouts
-- Drawer-based project editing
-- Modal forms
-- Micro-interactions and save feedback
-- A small cursor-following mascot
-
-Accessibility was also considered during the polish phase, including keyboard focus states and support for `prefers-reduced-motion`.
-
----
-
-## 📸 Screenshots
-
-### Dashboard
-
-The main dashboard combines project status, deadlines, client filtering and a Kanban-style workflow.
-
-![Clientboard dashboard](docs/images/dashboard.png)
-
-### Client workspace
-
-Each client has its own overview with project statistics, client information and a custom visual identity.
-
-![Clientboard client view](docs/images/client-view.png)
-
-### Project details
-
-Projects can be managed directly from the project drawer, including status, deadline, progress, client assignment and notes.
-
-![Clientboard project drawer](docs/images/project-drawer.png)
+![Clientboard project detail drawer](./docs/project-drawer.png)
 
 ### Responsive design
 
-Clientboard was designed to remain usable on smaller screens, with horizontally scrollable client filters and a single-column project workflow.
+![Clientboard mobile view](./docs/mobile.png)
 
-<p align="center">
-    <img
-        src="docs/images/mobile.png"
-        alt="Clientboard mobile dashboard"
-        width="390"
-    >
-</p>
+## Features
 
----
+- Client management
+- Create, edit and delete clients
+- Project cards with status and progress
+- Project detail drawer
+- Editable deadlines
+- Progress tracking
+- Responsive dashboard layout
+- Interactive UI states
+- Custom animated landscape interface
+- Laravel routes, controllers and database models
+- Form validation and database persistence
 
-## 🚀 Local setup
+## Built with
 
-Clone the repository:
+- Laravel
+- PHP
+- Blade
+- JavaScript
+- CSS
+- MySQL
+- Vite
+- Git
+
+## What I learned
+
+Clientboard was built as my introduction to Laravel.
+
+During the project I worked with:
+
+- Laravel routing
+- Controllers and request handling
+- Blade templates
+- Database migrations
+- Eloquent models
+- CRUD operations
+- Form validation
+- Connecting front-end interactions to backend functionality
+- Organising a larger application into reusable parts
+- Managing application state between the server and interface
+
+Coming from mainly WordPress and front-end development, Clientboard helped me understand how a modern PHP framework structures an application.
+
+## Local setup
+
+Clone the repository and install the PHP dependencies:
 
 ```bash
-git clone YOUR_REPOSITORY_URL
-cd clientboard
+composer install

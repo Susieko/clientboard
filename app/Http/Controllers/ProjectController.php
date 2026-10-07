@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ProjectStatus;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ProjectController extends Controller
 {
@@ -21,7 +23,7 @@ class ProjectController extends Controller
             ],
             'status' => [
                 'required',
-                'in:design,development,feedback,done',
+                Rule::enum(ProjectStatus::class),
             ],
             'deadline' => [
                 'nullable',

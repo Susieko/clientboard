@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ProjectStatus;
 use App\Models\Client;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -26,32 +27,13 @@ class DashboardController extends Controller
             ? $clients->firstWhere('slug', $selectedSlug)
             : null;
 
-
         /*
         |--------------------------------------------------------------------------
         | Workflow
         |--------------------------------------------------------------------------
         */
 
-        $workflowColumns = [
-            [
-                'key' => 'design',
-                'label' => 'Design',
-            ],
-            [
-                'key' => 'development',
-                'label' => 'Development',
-            ],
-            [
-                'key' => 'feedback',
-                'label' => 'Waiting for feedback',
-            ],
-            [
-                'key' => 'done',
-                'label' => 'Done',
-            ],
-        ];
-
+        $workflowColumns = ProjectStatus::workflowColumns();
 
         /*
         |--------------------------------------------------------------------------
@@ -74,7 +56,6 @@ class DashboardController extends Controller
                 ->values()
             : $projects;
 
-
         /*
         |--------------------------------------------------------------------------
         | Next deadline
@@ -84,7 +65,7 @@ class DashboardController extends Controller
         $nextDeadlineProject = $visibleProjects
             ->where('status', '!=', 'done')
             ->filter(function ($project) {
-                if (!$project->deadline) {
+                if (! $project->deadline) {
                     return false;
                 }
 
@@ -119,7 +100,6 @@ class DashboardController extends Controller
             ];
         }
 
-
         /*
         |--------------------------------------------------------------------------
         | Selected client stats
@@ -140,7 +120,7 @@ class DashboardController extends Controller
 
             $nextClientDeadlineProject = $openClientProjects
                 ->filter(function ($project) {
-                    if (!$project->deadline) {
+                    if (! $project->deadline) {
                         return false;
                     }
 
@@ -163,7 +143,6 @@ class DashboardController extends Controller
                         ->format('j M')
                     : null,
             ];
-
 
             /*
              * Create initials for the avatar.
@@ -195,7 +174,6 @@ class DashboardController extends Controller
             }
         }
 
-
         /*
         |--------------------------------------------------------------------------
         | Dashboard stats
@@ -213,7 +191,6 @@ class DashboardController extends Controller
         $clientCount = $selectedClient
             ? 1
             : $clients->count();
-
 
         return view('dashboard', [
             'waitingForFeedback' => $waitingForFeedback,

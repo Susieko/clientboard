@@ -138,3 +138,58 @@ Clone the repository and install the PHP dependencies:
 ```bash
 composer install
 ```
+
+Install the front-end dependencies:
+
+```bash
+npm install
+```
+
+On Windows PowerShell, use `npm.cmd install` if script execution blocks `npm.ps1`.
+
+Create your local environment file and application key:
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+Configure the database connection in `.env`, then run the migrations:
+
+```bash
+php artisan migrate
+```
+
+Start the Laravel development server:
+
+```bash
+php artisan serve
+```
+
+In a second terminal, start Vite:
+
+```bash
+npm run dev
+```
+
+On Windows PowerShell, `npm.cmd run dev` can be used instead.
+
+## Testing and build
+
+Run the test suite:
+
+```bash
+php artisan test
+```
+
+Create a production front-end build:
+
+```bash
+npm run build
+```
+
+On Windows PowerShell, use `npm.cmd run build` if needed.
+
+## Project status
+
+Clientboard is a learning and portfolio project. The core client and project management flows are functional, and I continue to use the project to practise Laravel architecture, maintainability and full-stack development.

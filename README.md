@@ -137,3 +137,4 @@ Clone the repository and install the PHP dependencies:
 
 ```bash
 composer install
+```
